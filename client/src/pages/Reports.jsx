@@ -9,6 +9,7 @@ function Reports() {
   const [date, setDate] = useState("");
   const [department, setDepartment] = useState("All");
   const [status, setStatus] = useState("All");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchReport();
@@ -30,8 +31,14 @@ function Reports() {
     }
   };
 
+  const filteredAttendance = attendance.filter((item) =>
+    `${item.employeeId?.employeeId} ${item.employeeId?.name} ${item.employeeId?.department} ${item.status}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
+
   const exportToExcel = () => {
-    const data = attendance.map((item) => ({
+    const data = filteredAttendance.map((item) => ({
       "Employee ID": item.employeeId?.employeeId,
       Name: item.employeeId?.name,
       Department: item.employeeId?.department,
@@ -116,8 +123,18 @@ function Reports() {
 
           <div className="bg-white rounded-xl shadow p-6">
             <h2 className="text-xl font-bold mb-4">
-              Report Result ({attendance.length})
+              Report Result ({filteredAttendance.length})
             </h2>
+
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Search by employee ID, name, department or status..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="border p-3 rounded w-full md:w-1/2"
+              />
+            </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -136,14 +153,14 @@ function Reports() {
                 </thead>
 
                 <tbody>
-                  {attendance.length === 0 ? (
+                  {filteredAttendance.length === 0 ? (
                     <tr>
                       <td colSpan="9" className="text-center p-6 text-gray-500">
                         No report data found
                       </td>
                     </tr>
                   ) : (
-                    attendance.map((item) => (
+                    filteredAttendance.map((item) => (
                       <tr key={item._id} className="border-b hover:bg-gray-50">
                         <td className="p-3">{item.employeeId?.employeeId}</td>
                         <td className="p-3">{item.employeeId?.name}</td>

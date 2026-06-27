@@ -1,4 +1,16 @@
 import { useEffect, useState } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+
 import api from "../services/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -31,6 +43,22 @@ function Dashboard() {
     </div>
   );
 
+  const departmentChartData =
+    stats?.departmentStats?.map((dept) => ({
+      name: dept._id,
+      employees: dept.count,
+    })) || [];
+
+  const leaveChartData = stats
+    ? [
+        { name: "Pending", value: stats.pendingLeaves || 0 },
+        { name: "Approved", value: stats.approvedLeaves || 0 },
+        { name: "Rejected", value: stats.rejectedLeaves || 0 },
+      ]
+    : [];
+
+  const leaveColors = ["#FACC15", "#22C55E", "#EF4444"];
+
   return (
     <div className="flex">
       <Sidebar />
@@ -44,7 +72,7 @@ function Dashboard() {
               HR Management Dashboard
             </h1>
             <p className="text-gray-500 mt-1">
-              Overview of employees, attendance and departments
+              Overview of employees, attendance, leaves and departments
             </p>
           </div>
 
@@ -108,134 +136,139 @@ function Dashboard() {
                   icon="📊"
                   color="text-indigo-600"
                 />
+
+                <StatCard
+                  title="Pending Leaves"
+                  value={stats.pendingLeaves}
+                  icon="🕒"
+                  color="text-yellow-600"
+                />
+
+                <StatCard
+                  title="Approved Leaves"
+                  value={stats.approvedLeaves}
+                  icon="✅"
+                  color="text-green-600"
+                />
+
+                <StatCard
+                  title="Rejected Leaves"
+                  value={stats.rejectedLeaves}
+                  icon="❌"
+                  color="text-red-600"
+                />
               </div>
-	<StatCard
-  title="Pending Leaves"
-  value={stats.pendingLeaves}
-  icon="🕒"
-  color="text-yellow-600"
-/>
 
-<StatCard
-  title="Approved Leaves"
-  value={stats.approvedLeaves}
-  icon="✅"
-  color="text-green-600"
-/>
-
-<StatCard
-  title="Rejected Leaves"
-  value={stats.rejectedLeaves}
-  icon="❌"
-  color="text-red-600"
-/>
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white rounded-xl shadow p-6 lg:col-span-1">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div className="bg-white rounded-xl shadow p-6">
                   <h2 className="text-xl font-bold text-gray-800 mb-4">
-                    Department Wise Employees
+                    Employees by Department
                   </h2>
 
-                  {stats.departmentStats?.length === 0 ? (
-                    <p className="text-gray-500">No department data</p>
-                  ) : (
-                    <div className="space-y-4">
-                      {stats.departmentStats.map((dept) => {
-                        const percent =
-                          stats.totalEmployees > 0
-                            ? (dept.count / stats.totalEmployees) * 100
-                            : 0;
-
-                        return (
-                          <div key={dept._id}>
-                            <div className="flex justify-between mb-1">
-                              <span className="font-medium text-gray-700">
-                                {dept._id}
-                              </span>
-                              <span className="font-bold text-gray-800">
-                                {dept.count}
-                              </span>
-                            </div>
-
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div
-                                className="bg-blue-600 h-2 rounded-full"
-                                style={{ width: `${percent}%` }}
-                              ></div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={departmentChartData}>
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="employees" fill="#2563EB" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow p-6 lg:col-span-2">
+                <div className="bg-white rounded-xl shadow p-6">
                   <h2 className="text-xl font-bold text-gray-800 mb-4">
-                    Recent Attendance
+                    Leave Status
                   </h2>
 
-                  {stats.recentAttendance?.length === 0 ? (
-                    <p className="text-gray-500">No attendance today</p>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="bg-gray-100 text-gray-700">
-                            <th className="text-left p-3">Employee</th>
-                            <th className="text-left p-3">Department</th>
-                            <th className="text-left p-3">Check In</th>
-                            <th className="text-left p-3">Check Out</th>
-                            <th className="text-left p-3">Hours</th>
-                            <th className="text-left p-3">Status</th>
-                          </tr>
-                        </thead>
-
-                        <tbody>
-                          {stats.recentAttendance.map((item, index) => (
-                            <tr
-                              key={index}
-                              className="border-b hover:bg-gray-50"
-                            >
-                              <td className="p-3">
-                                <div className="font-semibold text-gray-800">
-                                  {item.name}
-                                </div>
-                                <div className="text-xs text-gray-500">
-                                  {item.employeeId}
-                                </div>
-                              </td>
-
-                              <td className="p-3">{item.department}</td>
-                              <td className="p-3">{item.checkIn || "-"}</td>
-                              <td className="p-3">{item.checkOut || "-"}</td>
-
-                              <td className="p-3">
-                                {item.workingHours
-                                  ? `${item.workingHours} hrs`
-                                  : "-"}
-                              </td>
-
-                              <td className="p-3">
-                                <span
-                                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                                    item.status === "Late"
-                                      ? "bg-yellow-100 text-yellow-700"
-                                      : item.status === "Half Day"
-                                      ? "bg-orange-100 text-orange-700"
-                                      : "bg-green-100 text-green-700"
-                                  }`}
-                                >
-                                  {item.status}
-                                </span>
-                              </td>
-                            </tr>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={leaveChartData}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={100}
+                          label
+                        >
+                          {leaveChartData.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={leaveColors[index]}
+                            />
                           ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow p-6 mb-8">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Recent Attendance
+                </h2>
+
+                {stats.recentAttendance?.length === 0 ? (
+                  <p className="text-gray-500">No attendance today</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-gray-100 text-gray-700">
+                          <th className="text-left p-3">Employee</th>
+                          <th className="text-left p-3">Department</th>
+                          <th className="text-left p-3">Check In</th>
+                          <th className="text-left p-3">Check Out</th>
+                          <th className="text-left p-3">Hours</th>
+                          <th className="text-left p-3">Status</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {stats.recentAttendance.map((item, index) => (
+                          <tr key={index} className="border-b hover:bg-gray-50">
+                            <td className="p-3">
+                              <div className="font-semibold text-gray-800">
+                                {item.name}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {item.employeeId}
+                              </div>
+                            </td>
+
+                            <td className="p-3">{item.department}</td>
+                            <td className="p-3">{item.checkIn || "-"}</td>
+                            <td className="p-3">{item.checkOut || "-"}</td>
+                            <td className="p-3">
+                              {item.workingHours
+                                ? `${item.workingHours} hrs`
+                                : "-"}
+                            </td>
+
+                            <td className="p-3">
+                              <span
+                                className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                  item.status === "Late"
+                                    ? "bg-yellow-100 text-yellow-700"
+                                    : item.status === "Half Day"
+                                    ? "bg-orange-100 text-orange-700"
+                                    : "bg-green-100 text-green-700"
+                                }`}
+                              >
+                                {item.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
 
               <div className="bg-white rounded-xl shadow p-6">
@@ -244,14 +277,6 @@ function Dashboard() {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="border rounded-lg p-4">
-                    <p className="text-2xl mb-2">📝</p>
-                    <h3 className="font-bold">Leave Management</h3>
-                    <p className="text-sm text-gray-500">
-                      Apply, approve and track leaves
-                    </p>
-                  </div>
-
                   <div className="border rounded-lg p-4">
                     <p className="text-2xl mb-2">💰</p>
                     <h3 className="font-bold">Payroll</h3>
@@ -262,9 +287,9 @@ function Dashboard() {
 
                   <div className="border rounded-lg p-4">
                     <p className="text-2xl mb-2">📄</p>
-                    <h3 className="font-bold">Reports</h3>
+                    <h3 className="font-bold">PDF Export</h3>
                     <p className="text-sm text-gray-500">
-                      Daily and monthly reports
+                      Download reports and payslips
                     </p>
                   </div>
 
@@ -273,6 +298,14 @@ function Dashboard() {
                     <h3 className="font-bold">Roles</h3>
                     <p className="text-sm text-gray-500">
                       Admin, HR and employee access
+                    </p>
+                  </div>
+
+                  <div className="border rounded-lg p-4">
+                    <p className="text-2xl mb-2">🚀</p>
+                    <h3 className="font-bold">Deployment</h3>
+                    <p className="text-sm text-gray-500">
+                      Vercel, Render and MongoDB Atlas
                     </p>
                   </div>
                 </div>

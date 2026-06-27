@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import api from "../services/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -6,6 +7,7 @@ import Navbar from "../components/Navbar";
 function Attendance() {
   const [employees, setEmployees] = useState([]);
   const [attendance, setAttendance] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchEmployees();
@@ -18,6 +20,7 @@ function Attendance() {
       setEmployees(res.data.employees);
     } catch (err) {
       console.log("Employee fetch error:", err.message);
+      toast.error("Failed to fetch employees");
     }
   };
 
@@ -27,6 +30,7 @@ function Attendance() {
       setAttendance(res.data.attendance);
     } catch (err) {
       console.log("Attendance fetch error:", err.message);
+      toast.error("Failed to fetch attendance");
     }
   };
 
@@ -36,11 +40,11 @@ function Attendance() {
         employeeId,
       });
 
-      alert(res.data.message || "Check In Successful");
+      toast.success(res.data.message || "Check In Successful");
       fetchAttendance();
     } catch (err) {
       console.log(err.response?.data || err.message);
-      alert(err.response?.data?.message || "Check In Failed");
+      toast.error(err.response?.data?.message || "Check In Failed");
     }
   };
 
@@ -50,46 +54,53 @@ function Attendance() {
         employeeId,
       });
 
-      alert(res.data.message || "Check Out Successful");
+      toast.success(res.data.message || "Check Out Successful");
       fetchAttendance();
     } catch (err) {
       console.log(err.response?.data || err.message);
-      alert(err.response?.data?.message || "Check Out Failed");
+      toast.error(err.response?.data?.message || "Check Out Failed");
     }
   };
 
- const calculateWorkingHours = (checkIn, checkOut) => {
-  if (!checkIn || !checkOut) return "-";
+  const calculateWorkingHours = (checkIn, checkOut) => {
+    if (!checkIn || !checkOut) return "-";
 
-  const convertToSeconds = (time) => {
-    const [timePart, modifier] = time.split(" ");
-    let [hours, minutes, seconds] = timePart.split(":").map(Number);
+    const convertToSeconds = (time) => {
+      const [timePart, modifier] = time.split(" ");
+      let [hours, minutes, seconds] = timePart.split(":").map(Number);
 
-    if (modifier === "PM" && hours !== 12) {
-      hours += 12;
+      if (modifier === "PM" && hours !== 12) {
+        hours += 12;
+      }
+
+      if (modifier === "AM" && hours === 12) {
+        hours = 0;
+      }
+
+      return hours * 3600 + minutes * 60 + seconds;
+    };
+
+    const inSeconds = convertToSeconds(checkIn);
+    const outSeconds = convertToSeconds(checkOut);
+
+    let diffSeconds = outSeconds - inSeconds;
+
+    if (diffSeconds < 0) {
+      diffSeconds += 24 * 3600;
     }
 
-    if (modifier === "AM" && hours === 12) {
-      hours = 0;
-    }
+    const hours = Math.floor(diffSeconds / 3600);
+    const minutes = Math.floor((diffSeconds % 3600) / 60);
 
-    return hours * 3600 + minutes * 60 + seconds;
+    return `${hours}h ${minutes}m`;
   };
 
-  const inSeconds = convertToSeconds(checkIn);
-  const outSeconds = convertToSeconds(checkOut);
+  const filteredEmployees = employees.filter((emp) =>
+    `${emp.employeeId} ${emp.name} ${emp.department}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
 
-  let diffSeconds = outSeconds - inSeconds;
-
-  if (diffSeconds < 0) {
-    diffSeconds += 24 * 3600;
-  }
-
-  const hours = Math.floor(diffSeconds / 3600);
-  const minutes = Math.floor((diffSeconds % 3600) / 60);
-
-  return `${hours}h ${minutes}m`;
-};
   return (
     <div className="flex">
       <Sidebar />
@@ -101,6 +112,16 @@ function Attendance() {
           <h1 className="text-3xl font-bold mb-6">
             Attendance Management
           </h1>
+
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Search employee by name, ID or department..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="border p-3 rounded w-full md:w-1/2"
+            />
+          </div>
 
           <div className="bg-white rounded-lg shadow overflow-x-auto">
             <table className="min-w-full">
@@ -118,16 +139,20 @@ function Attendance() {
               </thead>
 
               <tbody>
-                {employees.length === 0 ? (
+                {filteredEmployees.length === 0 ? (
                   <tr>
                     <td colSpan="8" className="text-center p-6 text-gray-500">
                       No Employees Found
                     </td>
                   </tr>
                 ) : (
-                  employees.map((emp) => {
+                  filteredEmployees.map((emp) => {
+                    const today = new Date().toISOString().split("T")[0];
+
                     const todayAttendance = attendance.find(
-                      (a) => a.employeeId?._id === emp._id
+                      (a) =>
+                        a.employeeId?._id === emp._id &&
+                        a.date === today
                     );
 
                     return (
@@ -154,11 +179,11 @@ function Attendance() {
 
                         <td className="p-3">
                           {todayAttendance?.checkIn
-  ? calculateWorkingHours(
-      todayAttendance.checkIn,
-      todayAttendance.checkOut
-    )
-  : "-"}
+                            ? calculateWorkingHours(
+                                todayAttendance.checkIn,
+                                todayAttendance.checkOut
+                              )
+                            : "-"}
                         </td>
 
                         <td className="p-3">

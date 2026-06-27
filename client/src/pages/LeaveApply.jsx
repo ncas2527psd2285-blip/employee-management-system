@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import api from "../services/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -23,6 +24,7 @@ function LeaveApply() {
       setEmployees(res.data.employees);
     } catch (err) {
       console.log("Employee fetch error:", err.message);
+      toast.error("Failed to fetch employees");
     }
   };
 
@@ -38,7 +40,8 @@ function LeaveApply() {
 
     try {
       const res = await api.post("/leave/apply", formData);
-      alert(res.data.message || "Leave applied successfully");
+
+      toast.success(res.data.message || "Leave applied successfully");
 
       setFormData({
         employeeId: "",
@@ -48,7 +51,7 @@ function LeaveApply() {
         reason: "",
       });
     } catch (err) {
-      alert(err.response?.data?.message || "Leave apply failed");
+      toast.error(err.response?.data?.message || "Leave apply failed");
     }
   };
 

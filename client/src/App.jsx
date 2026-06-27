@@ -6,6 +6,8 @@ import Register from "./pages/Register";
 import Employees from "./pages/Employees";
 import Attendance from "./pages/Attendance";
 import Reports from "./pages/Reports";
+import LeaveManagement from "./pages/LeaveManagement";
+import LeaveApply from "./pages/LeaveApply";
 
 function App() {
   return (
@@ -14,10 +16,12 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+	<Route path="/apply-leave" element={<LeaveApply />} />
         <Route path="/dashboard" element={<Dashboard />} />
-	<Route path="/employees" element={<Employees />} />
-	<Route path="/attendance" element={<Attendance />} />
-	<Route path="/reports" element={<Reports />} />
+        <Route path="/employees" element={<Employees />} />
+        <Route path="/attendance" element={<Attendance />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/leaves" element={<LeaveManagement />} />
       </Routes>
     </BrowserRouter>
   );

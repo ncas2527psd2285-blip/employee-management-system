@@ -109,6 +109,26 @@ function Dashboard() {
                   color="text-indigo-600"
                 />
               </div>
+	<StatCard
+  title="Pending Leaves"
+  value={stats.pendingLeaves}
+  icon="🕒"
+  color="text-yellow-600"
+/>
+
+<StatCard
+  title="Approved Leaves"
+  value={stats.approvedLeaves}
+  icon="✅"
+  color="text-green-600"
+/>
+
+<StatCard
+  title="Rejected Leaves"
+  value={stats.rejectedLeaves}
+  icon="❌"
+  color="text-red-600"
+/>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 <div className="bg-white rounded-xl shadow p-6 lg:col-span-1">

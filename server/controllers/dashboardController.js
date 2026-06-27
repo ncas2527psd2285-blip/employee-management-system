@@ -1,31 +1,32 @@
 const Employee = require("../models/Employee");
 const Attendance = require("../models/Attendance");
+const Leave = require("../models/Leave");
 
 const getDashboardStats = async (req, res) => {
   try {
     const todayDate = new Date();
 
-const todayStart = new Date(
-  todayDate.getFullYear(),
-  todayDate.getMonth(),
-  todayDate.getDate()
-);
+    const todayStart = new Date(
+      todayDate.getFullYear(),
+      todayDate.getMonth(),
+      todayDate.getDate()
+    );
 
-const todayEnd = new Date(
-  todayDate.getFullYear(),
-  todayDate.getMonth(),
-  todayDate.getDate() + 1
-);
+    const todayEnd = new Date(
+      todayDate.getFullYear(),
+      todayDate.getMonth(),
+      todayDate.getDate() + 1
+    );
 
     const totalEmployees = await Employee.countDocuments();
     const activeEmployees = await Employee.countDocuments({ status: "Active" });
 
-   const todayAttendance = await Attendance.find({
-  createdAt: {
-    $gte: todayStart,
-    $lt: todayEnd,
-  },
-}).populate("employeeId");
+    const todayAttendance = await Attendance.find({
+      createdAt: {
+        $gte: todayStart,
+        $lt: todayEnd,
+      },
+    }).populate("employeeId");
 
     const presentToday = todayAttendance.length;
     const absentToday = totalEmployees - presentToday;
@@ -41,6 +42,10 @@ const todayEnd = new Date(
     const completedToday = todayAttendance.filter(
       (item) => item.checkIn && item.checkOut
     ).length;
+
+    const pendingLeaves = await Leave.countDocuments({ status: "Pending" });
+    const approvedLeaves = await Leave.countDocuments({ status: "Approved" });
+    const rejectedLeaves = await Leave.countDocuments({ status: "Rejected" });
 
     const departmentStats = await Employee.aggregate([
       {
@@ -86,6 +91,9 @@ const todayEnd = new Date(
       lateToday,
       halfDayToday,
       completedToday,
+      pendingLeaves,
+      approvedLeaves,
+      rejectedLeaves,
       departmentStats,
       recentAttendance,
       averageWorkingHours: `${averageWorkingHours} hrs`,

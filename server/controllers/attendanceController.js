@@ -73,9 +73,10 @@ exports.checkOut = async (req, res) => {
   try {
     const { employeeId } = req.body;
 
-    const today = new Date().toISOString().split("T")[0];
-
-    const attendance = await Attendance.findOne({ employeeId, date: today });
+   const attendance = await Attendance.findOne({
+  employeeId,
+  checkOut: null,
+}).sort({ createdAt: -1 });
 
     if (!attendance) {
       return res.status(404).json({

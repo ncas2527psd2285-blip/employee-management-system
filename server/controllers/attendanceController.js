@@ -81,7 +81,7 @@ exports.checkOut = async (req, res) => {
     if (!attendance) {
       return res.status(404).json({
         success: false,
-        message: "No check-in found for today",
+        message: "No active check-in found",
       });
     }
 

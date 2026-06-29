@@ -7,6 +7,7 @@ const employeeRoutes = require("./routes/employeeRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const leaveRoutes = require("./routes/leaveRoutes");
+const payrollRoutes = require("./routes/payrollRoutes");
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use("/api/employees", employeeRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/leave", leaveRoutes);
+app.use("/api/payroll", payrollRoutes);
 
 app.get("/", (req, res) => {
   res.send("Employee Management System API is Running 🚀");

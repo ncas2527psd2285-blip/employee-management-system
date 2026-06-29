@@ -7,7 +7,6 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // Check required fields
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
@@ -15,7 +14,9 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Check if user already exists
+    const allowedRoles = ["admin", "hr", "employee"];
+    const userRole = allowedRoles.includes(role) ? role : "employee";
+
     const userExists = await User.findOne({ email });
 
     if (userExists) {
@@ -25,16 +26,14 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
-      role,
+      role: userRole,
     });
 
     res.status(201).json({
@@ -47,7 +46,6 @@ const registerUser = async (req, res) => {
         role: user.role,
       },
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -61,7 +59,6 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -71,7 +68,6 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -81,7 +77,6 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // Generate JWT Token
     const token = jwt.sign(
       {
         id: user._id,
@@ -104,7 +99,6 @@ const loginUser = async (req, res) => {
         role: user.role,
       },
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,

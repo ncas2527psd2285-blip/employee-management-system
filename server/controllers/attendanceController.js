@@ -1,31 +1,21 @@
 const Attendance = require("../models/Attendance");
 const Employee = require("../models/Employee");
 
-// Convert time like "9:40:04 PM" into seconds
 const convertTimeToSeconds = (time) => {
   if (!time) return 0;
 
   const [timePart, modifier] = time.split(" ");
   let [hours, minutes, seconds] = timePart.split(":").map(Number);
 
-  if (modifier === "PM" && hours !== 12) {
-    hours += 12;
-  }
-
-  if (modifier === "AM" && hours === 12) {
-    hours = 0;
-  }
+  if (modifier === "PM" && hours !== 12) hours += 12;
+  if (modifier === "AM" && hours === 12) hours = 0;
 
   return hours * 3600 + minutes * 60 + seconds;
 };
 
-// =============================
-// CHECK IN
-// =============================
 exports.checkIn = async (req, res) => {
   try {
     const { employeeId } = req.body;
-
     const today = new Date().toISOString().split("T")[0];
 
     const employee = await Employee.findById(employeeId);
@@ -50,6 +40,7 @@ exports.checkIn = async (req, res) => {
       employeeId,
       date: today,
       checkIn: new Date().toLocaleTimeString(),
+      checkOut: null,
       status: "Present",
     });
 
@@ -66,29 +57,19 @@ exports.checkIn = async (req, res) => {
   }
 };
 
-// =============================
-// CHECK OUT
-// =============================
 exports.checkOut = async (req, res) => {
   try {
     const { employeeId } = req.body;
 
-   const attendance = await Attendance.findOne({
-  employeeId,
-  checkOut: null,
-}).sort({ createdAt: -1 });
+    const attendance = await Attendance.findOne({
+      employeeId,
+      checkOut: null,
+    }).sort({ createdAt: -1 });
 
     if (!attendance) {
       return res.status(404).json({
         success: false,
         message: "No active check-in found",
-      });
-    }
-
-    if (attendance.checkOut) {
-      return res.status(400).json({
-        success: false,
-        message: "Already checked out today",
       });
     }
 
@@ -99,20 +80,13 @@ exports.checkOut = async (req, res) => {
 
     let diffSeconds = outSeconds - inSeconds;
 
-    if (diffSeconds < 0) {
-      diffSeconds += 24 * 3600;
-    }
+    if (diffSeconds < 0) diffSeconds += 24 * 3600;
 
     const workingHours = diffSeconds / 3600;
 
     attendance.checkOut = checkOutTime;
     attendance.workingHours = Number(workingHours.toFixed(2));
-
-    if (workingHours < 4) {
-      attendance.status = "Half Day";
-    } else {
-      attendance.status = "Present";
-    }
+    attendance.status = workingHours < 4 ? "Half Day" : "Present";
 
     await attendance.save();
 
@@ -129,9 +103,6 @@ exports.checkOut = async (req, res) => {
   }
 };
 
-// =============================
-// GET ATTENDANCE
-// =============================
 exports.getAttendance = async (req, res) => {
   try {
     const attendance = await Attendance.find()
@@ -150,22 +121,14 @@ exports.getAttendance = async (req, res) => {
   }
 };
 
-// =============================
-// GET ATTENDANCE REPORT
-// =============================
 exports.getAttendanceReport = async (req, res) => {
   try {
     const { date, department, status } = req.query;
 
     let filter = {};
 
-    if (date) {
-      filter.date = date;
-    }
-
-    if (status && status !== "All") {
-      filter.status = status;
-    }
+    if (date) filter.date = date;
+    if (status && status !== "All") filter.status = status;
 
     let attendance = await Attendance.find(filter)
       .populate("employeeId", "employeeId name department designation")
@@ -180,6 +143,33 @@ exports.getAttendanceReport = async (req, res) => {
     res.json({
       success: true,
       count: attendance.length,
+      attendance,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.getMyAttendance = async (req, res) => {
+  try {
+    const employee = await Employee.findOne({ email: req.user.email });
+
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee profile not found",
+      });
+    }
+
+    const attendance = await Attendance.find({ employeeId: employee._id })
+      .populate("employeeId", "employeeId name department designation")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
       attendance,
     });
   } catch (err) {

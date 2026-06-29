@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 
 function LeaveApply() {
   const [employees, setEmployees] = useState([]);
+
   const [formData, setFormData] = useState({
     employeeId: "",
     leaveType: "Casual Leave",
@@ -21,10 +22,9 @@ function LeaveApply() {
   const fetchEmployees = async () => {
     try {
       const res = await api.get("/employees");
-      setEmployees(res.data.employees);
+      setEmployees(res.data.employees || []);
     } catch (err) {
-      console.log("Employee fetch error:", err.message);
-      toast.error("Failed to fetch employees");
+      toast.error(err.response?.data?.message || "Failed to fetch employees");
     }
   };
 

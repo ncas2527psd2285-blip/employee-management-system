@@ -6,10 +6,8 @@ const {
   loginUser,
 } = require("../controllers/authController");
 
-// Register
+// Public Routes
 router.post("/register", registerUser);
-
-// Login
 router.post("/login", loginUser);
 
 module.exports = router;

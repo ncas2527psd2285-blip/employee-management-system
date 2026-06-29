@@ -8,16 +8,18 @@ const {
   deleteEmployee,
 } = require("../controllers/employeeController");
 
-// Create Employee
-router.post("/", addEmployee);
+const { protect, authorizeRoles } = require("../middleware/authMiddleware");
 
-// Get All Employees
-router.get("/", getEmployees);
+// Create Employee - Admin and HR
+router.post("/", protect, authorizeRoles("admin", "hr"), addEmployee);
 
-// Update Employee
-router.put("/:id", updateEmployee);
+// Get All Employees - Admin and HR
+router.get("/", protect, authorizeRoles("admin", "hr"), getEmployees);
 
-// Delete Employee
-router.delete("/:id", deleteEmployee);
+// Update Employee - Admin and HR
+router.put("/:id", protect, authorizeRoles("admin", "hr"), updateEmployee);
+
+// Delete Employee - Admin only
+router.delete("/:id", protect, authorizeRoles("admin"), deleteEmployee);
 
 module.exports = router;

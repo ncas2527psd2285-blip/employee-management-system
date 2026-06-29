@@ -1,19 +1,42 @@
 const express = require("express");
 const router = express.Router();
 
-const {
-  checkIn,
-  checkOut,
-  getAttendance,
-  getAttendanceReport,
-} = require("../controllers/attendanceController");
-// =========================
-// ROUTES
-// =========================
+const attendanceController = require("../controllers/attendanceController");
+const { protect, authorizeRoles } = require("../middleware/authMiddleware");
 
-router.get("/", getAttendance);
-router.post("/checkin", checkIn);
-router.post("/checkout", checkOut);
-router.get("/report", getAttendanceReport);
+router.get(
+  "/my-attendance",
+  protect,
+  authorizeRoles("employee"),
+  attendanceController.getMyAttendance
+);
+
+router.get(
+  "/",
+  protect,
+  authorizeRoles("admin", "hr"),
+  attendanceController.getAttendance
+);
+
+router.post(
+  "/checkin",
+  protect,
+  authorizeRoles("admin", "hr"),
+  attendanceController.checkIn
+);
+
+router.post(
+  "/checkout",
+  protect,
+  authorizeRoles("admin", "hr"),
+  attendanceController.checkOut
+);
+
+router.get(
+  "/report",
+  protect,
+  authorizeRoles("admin", "hr"),
+  attendanceController.getAttendanceReport
+);
 
 module.exports = router;

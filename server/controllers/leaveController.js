@@ -56,6 +56,35 @@ exports.getLeaves = async (req, res) => {
   }
 };
 
+// GET MY LEAVES
+exports.getMyLeaves = async (req, res) => {
+  try {
+    const employee = await Employee.findOne({ email: req.user.email });
+
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee profile not found",
+      });
+    }
+
+    const leaves = await Leave.find({ employeeId: employee._id })
+      .populate("employeeId", "employeeId name department designation")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      count: leaves.length,
+      leaves,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // UPDATE LEAVE STATUS
 exports.updateLeaveStatus = async (req, res) => {
   try {

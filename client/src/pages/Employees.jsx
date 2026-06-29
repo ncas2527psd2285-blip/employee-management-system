@@ -15,8 +15,8 @@ function Employees() {
   const [showForm, setShowForm] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
-const [currentPage, setCurrentPage] = useState(1);
-const employeesPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const employeesPerPage = 5;
 
   const [search, setSearch] = useState("");
 
@@ -24,93 +24,74 @@ const employeesPerPage = 5;
     fetchEmployees();
   }, []);
 
-  // ============================
-  // Fetch Employees
-  // ============================
   const fetchEmployees = async () => {
     try {
       const response = await api.get("/employees");
 
-      setEmployees(response.data.employees);
-      setFilteredEmployees(response.data.employees);
+      setEmployees(response.data.employees || []);
+      setFilteredEmployees(response.data.employees || []);
     } catch (error) {
-      console.error(error);
+      console.log("Employees fetch error:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Failed to fetch employees");
     }
   };
 
-  // ============================
-  // Search Employees
-  // ============================
   useEffect(() => {
     const result = employees.filter((emp) => {
       return (
-        emp.name.toLowerCase().includes(search.toLowerCase()) ||
-        emp.employeeId.toLowerCase().includes(search.toLowerCase()) ||
-        emp.email.toLowerCase().includes(search.toLowerCase()) ||
-        emp.department.toLowerCase().includes(search.toLowerCase())
+        emp.name?.toLowerCase().includes(search.toLowerCase()) ||
+        emp.employeeId?.toLowerCase().includes(search.toLowerCase()) ||
+        emp.email?.toLowerCase().includes(search.toLowerCase()) ||
+        emp.department?.toLowerCase().includes(search.toLowerCase())
       );
     });
 
     setFilteredEmployees(result);
+    setCurrentPage(1);
   }, [search, employees]);
 
-// ============================
-// Pagination
-// ============================
-const indexOfLastEmployee = currentPage * employeesPerPage;
-const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
+  const indexOfLastEmployee = currentPage * employeesPerPage;
+  const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
 
-const currentEmployees = filteredEmployees.slice(
-  indexOfFirstEmployee,
-  indexOfLastEmployee
-);
+  const currentEmployees = filteredEmployees.slice(
+    indexOfFirstEmployee,
+    indexOfLastEmployee
+  );
 
-const totalPages = Math.ceil(
-  filteredEmployees.length / employeesPerPage
-);
+  const totalPages = Math.ceil(filteredEmployees.length / employeesPerPage);
 
-  // ============================
-  // Add Employee
-  // ============================
   const handleAdd = () => {
     setSelectedEmployee(null);
     setShowForm(true);
   };
 
-  // ============================
-  // Edit Employee
-  // ============================
   const handleEdit = (employee) => {
     setSelectedEmployee(employee);
     setShowForm(true);
   };
 
-  // ============================
-  // Delete Employee
-  // ============================
   const handleDelete = async (id) => {
-  const result = await Swal.fire({
-    title: "Delete Employee?",
-    text: "This action cannot be undone.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#dc2626",
-    cancelButtonColor: "#6b7280",
-    confirmButtonText: "Yes, Delete",
-  });
+    const result = await Swal.fire({
+      title: "Delete Employee?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, Delete",
+    });
 
-  if (!result.isConfirmed) return;
+    if (!result.isConfirmed) return;
 
-  try {
-    await api.delete(`/employees/${id}`);
+    try {
+      await api.delete(`/employees/${id}`);
 
-    toast.success("Employee Deleted Successfully");
-
-    fetchEmployees();
-  } catch (error) {
-    toast.error(error.response?.data?.message || "Delete Failed");
-  }
-};
+      toast.success("Employee Deleted Successfully");
+      fetchEmployees();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Delete Failed");
+    }
+  };
 
   return (
     <div className="flex">
@@ -120,12 +101,8 @@ const totalPages = Math.ceil(
         <Navbar />
 
         <div className="p-8">
-
-          {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold">
-              Employee Management
-            </h1>
+            <h1 className="text-3xl font-bold">Employee Management</h1>
 
             <button
               onClick={handleAdd}
@@ -135,10 +112,8 @@ const totalPages = Math.ceil(
             </button>
           </div>
 
-          {/* Employee Statistics */}
           <EmployeeStats employees={employees} />
 
-          {/* Search */}
           <div className="mb-6">
             <input
               type="text"
@@ -149,46 +124,44 @@ const totalPages = Math.ceil(
             />
           </div>
 
-          {/* Employee Table */}
           <EmployeeTable
-  employees={currentEmployees}
-  onEdit={handleEdit}
-  onDelete={handleDelete}
-/>
+            employees={currentEmployees}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
 
-<div className="flex justify-center items-center gap-2 mt-6">
-  <button
-    onClick={() => setCurrentPage((prev) => prev - 1)}
-    disabled={currentPage === 1}
-    className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-  >
-    Previous
-  </button>
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <button
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
 
-  {Array.from({ length: totalPages }, (_, index) => (
-    <button
-      key={index}
-      onClick={() => setCurrentPage(index + 1)}
-      className={`px-4 py-2 rounded ${
-        currentPage === index + 1
-          ? "bg-blue-600 text-white"
-          : "bg-gray-200"
-      }`}
-    >
-      {index + 1}
-    </button>
-  ))}
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`px-4 py-2 rounded ${
+                  currentPage === index + 1
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
 
-  <button
-    onClick={() => setCurrentPage((prev) => prev + 1)}
-    disabled={currentPage === totalPages || totalPages === 0}
-    className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-  >
-    Next
-  </button>
-</div>
+            <button
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              disabled={currentPage === totalPages || totalPages === 0}
+              className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
 
-          {/* Employee Form */}
           {showForm && (
             <EmployeeForm
               employee={selectedEmployee}
@@ -196,7 +169,6 @@ const totalPages = Math.ceil(
               refreshEmployees={fetchEmployees}
             />
           )}
-
         </div>
       </div>
     </div>

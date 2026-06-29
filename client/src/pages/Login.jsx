@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-const navigate = useNavigate();
+
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -16,11 +17,15 @@ const navigate = useNavigate();
         password,
       });
 
-      console.log(response.data);
-
       localStorage.setItem("token", response.data.token);
-navigate("/dashboard");
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("role", response.data.user.role.toLowerCase());
 
+      if (response.data.user.role.toLowerCase() === "employee") {
+  navigate("/employee-dashboard");
+} else {
+  navigate("/dashboard");
+}
     } catch (error) {
       alert(error.response?.data?.message || "Login Failed");
     }
@@ -49,10 +54,7 @@ navigate("/dashboard");
           required
         />
 
-        <button
-          type="submit"
-          style={{ width: "100%", padding: "10px" }}
-        >
+        <button type="submit" style={{ width: "100%", padding: "10px" }}>
           Login
         </button>
       </form>

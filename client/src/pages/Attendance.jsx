@@ -17,9 +17,8 @@ function Attendance() {
   const fetchEmployees = async () => {
     try {
       const res = await api.get("/employees");
-      setEmployees(res.data.employees);
+      setEmployees(res.data.employees || []);
     } catch (err) {
-      console.log("Employee fetch error:", err.message);
       toast.error("Failed to fetch employees");
     }
   };
@@ -27,37 +26,28 @@ function Attendance() {
   const fetchAttendance = async () => {
     try {
       const res = await api.get("/attendance");
-      setAttendance(res.data.attendance);
+      setAttendance(res.data.attendance || []);
     } catch (err) {
-      console.log("Attendance fetch error:", err.message);
       toast.error("Failed to fetch attendance");
     }
   };
 
   const handleCheckIn = async (employeeId) => {
     try {
-      const res = await api.post("/attendance/checkin", {
-        employeeId,
-      });
-
+      const res = await api.post("/attendance/checkin", { employeeId });
       toast.success(res.data.message || "Check In Successful");
       fetchAttendance();
     } catch (err) {
-      console.log(err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Check In Failed");
     }
   };
 
   const handleCheckOut = async (employeeId) => {
     try {
-      const res = await api.post("/attendance/checkout", {
-        employeeId,
-      });
-
+      const res = await api.post("/attendance/checkout", { employeeId });
       toast.success(res.data.message || "Check Out Successful");
       fetchAttendance();
     } catch (err) {
-      console.log(err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Check Out Failed");
     }
   };
@@ -69,13 +59,8 @@ function Attendance() {
       const [timePart, modifier] = time.split(" ");
       let [hours, minutes, seconds] = timePart.split(":").map(Number);
 
-      if (modifier === "PM" && hours !== 12) {
-        hours += 12;
-      }
-
-      if (modifier === "AM" && hours === 12) {
-        hours = 0;
-      }
+      if (modifier === "PM" && hours !== 12) hours += 12;
+      if (modifier === "AM" && hours === 12) hours = 0;
 
       return hours * 3600 + minutes * 60 + seconds;
     };
@@ -84,10 +69,7 @@ function Attendance() {
     const outSeconds = convertToSeconds(checkOut);
 
     let diffSeconds = outSeconds - inSeconds;
-
-    if (diffSeconds < 0) {
-      diffSeconds += 24 * 3600;
-    }
+    if (diffSeconds < 0) diffSeconds += 24 * 3600;
 
     const hours = Math.floor(diffSeconds / 3600);
     const minutes = Math.floor((diffSeconds % 3600) / 60);
@@ -105,11 +87,11 @@ function Attendance() {
     <div className="flex">
       <Sidebar />
 
-      <div className="ml-64 flex-1 bg-gray-100 min-h-screen">
+      <div className="md:ml-64 flex-1 bg-gray-100 min-h-screen">
         <Navbar />
 
-        <div className="p-8">
-          <h1 className="text-3xl font-bold mb-6">
+        <div className="p-4 md:p-8">
+          <h1 className="text-2xl md:text-3xl font-bold mb-6">
             Attendance Management
           </h1>
 
@@ -124,17 +106,17 @@ function Attendance() {
           </div>
 
           <div className="bg-white rounded-lg shadow overflow-x-auto">
-            <table className="min-w-full">
+            <table className="min-w-[900px] w-full text-sm">
               <thead className="bg-blue-600 text-white">
                 <tr>
-                  <th className="p-3">Employee ID</th>
-                  <th className="p-3">Name</th>
-                  <th className="p-3">Department</th>
-                  <th className="p-3">Check In</th>
-                  <th className="p-3">Check Out</th>
-                  <th className="p-3">Status</th>
-                  <th className="p-3">Working Hours</th>
-                  <th className="p-3">Action</th>
+                  <th className="p-3 text-left">Employee ID</th>
+                  <th className="p-3 text-left">Name</th>
+                  <th className="p-3 text-left">Department</th>
+                  <th className="p-3 text-left">Check In</th>
+                  <th className="p-3 text-left">Check Out</th>
+                  <th className="p-3 text-left">Status</th>
+                  <th className="p-3 text-left">Working Hours</th>
+                  <th className="p-3 text-left">Action</th>
                 </tr>
               </thead>
 
@@ -150,9 +132,7 @@ function Attendance() {
                     const today = new Date().toISOString().split("T")[0];
 
                     const todayAttendance = attendance.find(
-                      (a) =>
-                        a.employeeId?._id === emp._id &&
-                        a.date === today
+                      (a) => a.employeeId?._id === emp._id && a.date === today
                     );
 
                     return (
@@ -160,14 +140,8 @@ function Attendance() {
                         <td className="p-3">{emp.employeeId}</td>
                         <td className="p-3">{emp.name}</td>
                         <td className="p-3">{emp.department}</td>
-
-                        <td className="p-3">
-                          {todayAttendance?.checkIn || "-"}
-                        </td>
-
-                        <td className="p-3">
-                          {todayAttendance?.checkOut || "-"}
-                        </td>
+                        <td className="p-3">{todayAttendance?.checkIn || "-"}</td>
+                        <td className="p-3">{todayAttendance?.checkOut || "-"}</td>
 
                         <td className="p-3">
                           {!todayAttendance
@@ -190,14 +164,14 @@ function Attendance() {
                           {!todayAttendance ? (
                             <button
                               onClick={() => handleCheckIn(emp._id)}
-                              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
+                              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
                             >
                               Check In
                             </button>
                           ) : !todayAttendance.checkOut ? (
                             <button
                               onClick={() => handleCheckOut(emp._id)}
-                              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
                             >
                               Check Out
                             </button>

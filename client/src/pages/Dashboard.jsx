@@ -32,13 +32,15 @@ function Dashboard() {
   };
 
   const StatCard = ({ title, value, icon, color }) => (
-    <div className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-      <div className="flex items-center justify-between">
+    <div className="bg-white p-4 md:p-6 rounded-xl shadow hover:shadow-lg transition">
+      <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-gray-500 text-sm">{title}</p>
-          <h2 className={`text-3xl font-bold mt-2 ${color}`}>{value}</h2>
+          <h2 className={`text-2xl md:text-3xl font-bold mt-2 ${color}`}>
+            {value}
+          </h2>
         </div>
-        <div className="text-4xl">{icon}</div>
+        <div className="text-3xl md:text-4xl">{icon}</div>
       </div>
     </div>
   );
@@ -63,15 +65,15 @@ function Dashboard() {
     <div className="flex">
       <Sidebar />
 
-      <div className="ml-64 flex-1 bg-gray-100 min-h-screen">
+      <div className="md:ml-64 flex-1 bg-gray-100 min-h-screen">
         <Navbar />
 
-        <div className="p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">
+        <div className="p-4 md:p-8">
+          <div className="mb-6 md:mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
               HR Management Dashboard
             </h1>
-            <p className="text-gray-500 mt-1">
+            <p className="text-gray-500 mt-1 text-sm md:text-base">
               Overview of employees, attendance, leaves and departments
             </p>
           </div>
@@ -80,92 +82,27 @@ function Dashboard() {
             <p className="text-gray-600">Loading dashboard...</p>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-                <StatCard
-                  title="Total Employees"
-                  value={stats.totalEmployees}
-                  icon="👥"
-                  color="text-gray-800"
-                />
-
-                <StatCard
-                  title="Active Employees"
-                  value={stats.activeEmployees}
-                  icon="🟢"
-                  color="text-blue-600"
-                />
-
-                <StatCard
-                  title="Present Today"
-                  value={stats.presentToday}
-                  icon="✅"
-                  color="text-green-600"
-                />
-
-                <StatCard
-                  title="Absent Today"
-                  value={stats.absentToday}
-                  icon="❌"
-                  color="text-red-600"
-                />
-
-                <StatCard
-                  title="Late Today"
-                  value={stats.lateToday}
-                  icon="⏰"
-                  color="text-yellow-600"
-                />
-
-                <StatCard
-                  title="Half Day"
-                  value={stats.halfDayToday}
-                  icon="🌓"
-                  color="text-orange-600"
-                />
-
-                <StatCard
-                  title="Completed Today"
-                  value={stats.completedToday}
-                  icon="🏁"
-                  color="text-purple-600"
-                />
-
-                <StatCard
-                  title="Avg Working Hours"
-                  value={stats.averageWorkingHours}
-                  icon="📊"
-                  color="text-indigo-600"
-                />
-
-                <StatCard
-                  title="Pending Leaves"
-                  value={stats.pendingLeaves}
-                  icon="🕒"
-                  color="text-yellow-600"
-                />
-
-                <StatCard
-                  title="Approved Leaves"
-                  value={stats.approvedLeaves}
-                  icon="✅"
-                  color="text-green-600"
-                />
-
-                <StatCard
-                  title="Rejected Leaves"
-                  value={stats.rejectedLeaves}
-                  icon="❌"
-                  color="text-red-600"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-8">
+                <StatCard title="Total Employees" value={stats.totalEmployees} icon="👥" color="text-gray-800" />
+                <StatCard title="Active Employees" value={stats.activeEmployees} icon="🟢" color="text-blue-600" />
+                <StatCard title="Present Today" value={stats.presentToday} icon="✅" color="text-green-600" />
+                <StatCard title="Absent Today" value={stats.absentToday} icon="❌" color="text-red-600" />
+                <StatCard title="Late Today" value={stats.lateToday} icon="⏰" color="text-yellow-600" />
+                <StatCard title="Half Day" value={stats.halfDayToday} icon="🌓" color="text-orange-600" />
+                <StatCard title="Completed Today" value={stats.completedToday} icon="🏁" color="text-purple-600" />
+                <StatCard title="Avg Working Hours" value={stats.averageWorkingHours} icon="📊" color="text-indigo-600" />
+                <StatCard title="Pending Leaves" value={stats.pendingLeaves} icon="🕒" color="text-yellow-600" />
+                <StatCard title="Approved Leaves" value={stats.approvedLeaves} icon="✅" color="text-green-600" />
+                <StatCard title="Rejected Leaves" value={stats.rejectedLeaves} icon="❌" color="text-red-600" />
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div className="bg-white rounded-xl shadow p-6">
-                  <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-8">
+                <div className="bg-white rounded-xl shadow p-4 md:p-6">
+                  <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4">
                     Employees by Department
                   </h2>
 
-                  <div className="h-80">
+                  <div className="h-64 md:h-80">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={departmentChartData}>
                         <XAxis dataKey="name" />
@@ -177,12 +114,12 @@ function Dashboard() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow p-6">
-                  <h2 className="text-xl font-bold text-gray-800 mb-4">
+                <div className="bg-white rounded-xl shadow p-4 md:p-6">
+                  <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4">
                     Leave Status
                   </h2>
 
-                  <div className="h-80">
+                  <div className="h-64 md:h-80">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -191,14 +128,11 @@ function Dashboard() {
                           nameKey="name"
                           cx="50%"
                           cy="50%"
-                          outerRadius={100}
+                          outerRadius={90}
                           label
                         >
                           {leaveChartData.map((entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={leaveColors[index]}
-                            />
+                            <Cell key={`cell-${index}`} fill={leaveColors[index]} />
                           ))}
                         </Pie>
                         <Tooltip />
@@ -208,8 +142,8 @@ function Dashboard() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow p-6 mb-8">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <div className="bg-white rounded-xl shadow p-4 md:p-6 mb-8">
+                <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4">
                   Recent Attendance
                 </h2>
 
@@ -217,7 +151,7 @@ function Dashboard() {
                   <p className="text-gray-500">No attendance today</p>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="min-w-[700px] w-full text-sm">
                       <thead>
                         <tr className="bg-gray-100 text-gray-700">
                           <th className="text-left p-3">Employee</th>
@@ -245,9 +179,7 @@ function Dashboard() {
                             <td className="p-3">{item.checkIn || "-"}</td>
                             <td className="p-3">{item.checkOut || "-"}</td>
                             <td className="p-3">
-                              {item.workingHours
-                                ? `${item.workingHours} hrs`
-                                : "-"}
+                              {item.workingHours ? `${item.workingHours} hrs` : "-"}
                             </td>
 
                             <td className="p-3">
@@ -271,12 +203,12 @@ function Dashboard() {
                 )}
               </div>
 
-              <div className="bg-white rounded-xl shadow p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <div className="bg-white rounded-xl shadow p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4">
                   HRMS Next Modules
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="border rounded-lg p-4">
                     <p className="text-2xl mb-2">💰</p>
                     <h3 className="font-bold">Payroll</h3>
@@ -295,9 +227,9 @@ function Dashboard() {
 
                   <div className="border rounded-lg p-4">
                     <p className="text-2xl mb-2">🔐</p>
-                    <h3 className="font-bold">Roles</h3>
+                    <h3 className="font-bold">Security</h3>
                     <p className="text-sm text-gray-500">
-                      Admin, HR and employee access
+                      JWT authentication and protected access
                     </p>
                   </div>
 

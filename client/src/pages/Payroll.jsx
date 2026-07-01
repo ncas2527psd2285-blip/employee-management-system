@@ -26,7 +26,7 @@ function Payroll() {
   const fetchEmployees = async () => {
     try {
       const res = await api.get("/employees");
-      setEmployees(res.data.employees);
+      setEmployees(res.data.employees || []);
     } catch (err) {
       toast.error("Failed to fetch employees");
     }
@@ -35,7 +35,7 @@ function Payroll() {
   const fetchPayrolls = async () => {
     try {
       const res = await api.get("/payroll");
-      setPayrolls(res.data.payrolls);
+      setPayrolls(res.data.payrolls || []);
     } catch (err) {
       toast.error("Failed to fetch payrolls");
     }
@@ -89,15 +89,19 @@ function Payroll() {
     <div className="flex">
       <Sidebar />
 
-      <div className="ml-64 flex-1 bg-gray-100 min-h-screen">
+      <div className="md:ml-64 flex-1 bg-gray-100 min-h-screen">
         <Navbar />
 
-        <div className="p-8">
-          <h1 className="text-3xl font-bold mb-6">Payroll Management</h1>
+        <div className="p-4 md:p-8">
+          <h1 className="text-2xl md:text-3xl font-bold mb-6">
+            Payroll Management
+          </h1>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-xl shadow p-6 lg:col-span-1">
-              <h2 className="text-xl font-bold mb-4">Generate Payroll</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
+            <div className="bg-white rounded-xl shadow p-4 md:p-6 lg:col-span-1">
+              <h2 className="text-lg md:text-xl font-bold mb-4">
+                Generate Payroll
+              </h2>
 
               <form onSubmit={generatePayroll} className="space-y-4">
                 <select
@@ -142,10 +146,10 @@ function Payroll() {
                   className="border p-3 rounded w-full"
                 />
 
-                <div className="bg-gray-100 rounded p-4 space-y-2">
+                <div className="bg-gray-100 rounded p-4 space-y-2 text-sm md:text-base">
                   <p>
-                    <strong>Basic Salary:</strong>{" "}
-                    ₹{selectedEmployee?.salary || 0}
+                    <strong>Basic Salary:</strong> ₹
+                    {selectedEmployee?.salary || 0}
                   </p>
 
                   <p>
@@ -162,10 +166,12 @@ function Payroll() {
               </form>
             </div>
 
-            <div className="bg-white rounded-xl shadow p-6 lg:col-span-2">
-              <h2 className="text-xl font-bold mb-4">Payroll Summary</h2>
+            <div className="bg-white rounded-xl shadow p-4 md:p-6 lg:col-span-2">
+              <h2 className="text-lg md:text-xl font-bold mb-4">
+                Payroll Summary
+              </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="border rounded-lg p-4">
                   <p className="text-gray-500 text-sm">Total Payrolls</p>
                   <h3 className="text-2xl font-bold">{payrolls.length}</h3>
@@ -189,7 +195,7 @@ function Payroll() {
                 </div>
               </div>
 
-              <div className="mt-6 bg-gray-100 p-4 rounded-lg">
+              <div className="mt-6 bg-gray-100 p-4 rounded-lg text-sm md:text-base">
                 <p className="text-gray-600">
                   Payroll system calculates salary using:
                 </p>
@@ -200,11 +206,13 @@ function Payroll() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow p-6">
-            <h2 className="text-xl font-bold mb-4">Payroll History</h2>
+          <div className="bg-white rounded-xl shadow p-4 md:p-6">
+            <h2 className="text-lg md:text-xl font-bold mb-4">
+              Payroll History
+            </h2>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="min-w-[1000px] w-full text-sm">
                 <thead>
                   <tr className="bg-blue-600 text-white">
                     <th className="p-3 text-left">Employee ID</th>
@@ -239,23 +247,14 @@ function Payroll() {
                         <td className="p-3">
                           {payroll.employeeId?.employeeId}
                         </td>
-
-                        <td className="p-3">
-                          {payroll.employeeId?.name}
-                        </td>
-
+                        <td className="p-3">{payroll.employeeId?.name}</td>
                         <td className="p-3">
                           {payroll.employeeId?.department}
                         </td>
-
                         <td className="p-3">{payroll.month}</td>
-
                         <td className="p-3">₹{payroll.basicSalary}</td>
-
                         <td className="p-3">₹{payroll.allowances}</td>
-
                         <td className="p-3">₹{payroll.deductions}</td>
-
                         <td className="p-3 font-bold">
                           ₹{payroll.netSalary}
                         </td>
@@ -275,7 +274,7 @@ function Payroll() {
                         <td className="p-3">
                           <button
                             onClick={() => generatePayslip(payroll)}
-                            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs"
+                            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs whitespace-nowrap"
                           >
                             Download PDF
                           </button>

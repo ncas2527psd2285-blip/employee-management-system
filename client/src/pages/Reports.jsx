@@ -18,14 +18,10 @@ function Reports() {
   const fetchReport = async () => {
     try {
       const res = await api.get("/attendance/report", {
-        params: {
-          date,
-          department,
-          status,
-        },
+        params: { date, department, status },
       });
 
-      setAttendance(res.data.attendance);
+      setAttendance(res.data.attendance || []);
     } catch (err) {
       console.log("Report fetch error:", err.message);
     }
@@ -61,27 +57,31 @@ function Reports() {
     <div className="flex">
       <Sidebar />
 
-      <div className="ml-64 flex-1 bg-gray-100 min-h-screen">
+      <div className="md:ml-64 flex-1 bg-gray-100 min-h-screen">
         <Navbar />
 
-        <div className="p-8">
-          <h1 className="text-3xl font-bold mb-6">Attendance Reports</h1>
+        <div className="p-4 md:p-8">
+          <h1 className="text-2xl md:text-3xl font-bold mb-6">
+            Attendance Reports
+          </h1>
 
-          <div className="bg-white rounded-xl shadow p-6 mb-6">
-            <h2 className="text-xl font-bold mb-4">Report Filters</h2>
+          <div className="bg-white rounded-xl shadow p-4 md:p-6 mb-6">
+            <h2 className="text-lg md:text-xl font-bold mb-4">
+              Report Filters
+            </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="border p-3 rounded"
+                className="border p-3 rounded w-full"
               />
 
               <select
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                className="border p-3 rounded"
+                className="border p-3 rounded w-full"
               >
                 <option value="All">All Departments</option>
                 <option value="IT">IT</option>
@@ -96,7 +96,7 @@ function Reports() {
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="border p-3 rounded"
+                className="border p-3 rounded w-full"
               >
                 <option value="All">All Status</option>
                 <option value="Present">Present</option>
@@ -107,22 +107,22 @@ function Reports() {
 
               <button
                 onClick={fetchReport}
-                className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4"
+                className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-3 w-full"
               >
                 Generate Report
               </button>
 
               <button
                 onClick={exportToExcel}
-                className="bg-green-600 hover:bg-green-700 text-white rounded px-4"
+                className="bg-green-600 hover:bg-green-700 text-white rounded px-4 py-3 w-full"
               >
                 Export Excel
               </button>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow p-6">
-            <h2 className="text-xl font-bold mb-4">
+          <div className="bg-white rounded-xl shadow p-4 md:p-6">
+            <h2 className="text-lg md:text-xl font-bold mb-4">
               Report Result ({filteredAttendance.length})
             </h2>
 
@@ -137,7 +137,7 @@ function Reports() {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="min-w-[950px] w-full text-sm">
                 <thead>
                   <tr className="bg-blue-600 text-white">
                     <th className="p-3 text-left">Employee ID</th>

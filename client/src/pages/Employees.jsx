@@ -97,16 +97,18 @@ function Employees() {
     <div className="flex">
       <Sidebar />
 
-      <div className="ml-64 flex-1 bg-gray-100 min-h-screen">
+      <div className="md:ml-64 flex-1 bg-gray-100 min-h-screen">
         <Navbar />
 
-        <div className="p-8">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold">Employee Management</h1>
+        <div className="p-4 md:p-8">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+            <h1 className="text-2xl md:text-3xl font-bold">
+              Employee Management
+            </h1>
 
             <button
               onClick={handleAdd}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg w-full md:w-auto"
             >
               + Add Employee
             </button>
@@ -124,17 +126,19 @@ function Employees() {
             />
           </div>
 
-          <EmployeeTable
-            employees={currentEmployees}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          <div className="overflow-x-auto">
+            <EmployeeTable
+              employees={currentEmployees}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          </div>
 
-          <div className="flex justify-center items-center gap-2 mt-6">
+          <div className="flex flex-wrap justify-center items-center gap-2 mt-6">
             <button
               onClick={() => setCurrentPage((prev) => prev - 1)}
               disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+              className="px-3 md:px-4 py-2 bg-gray-300 rounded disabled:opacity-50 text-sm md:text-base"
             >
               Previous
             </button>
@@ -143,7 +147,7 @@ function Employees() {
               <button
                 key={index}
                 onClick={() => setCurrentPage(index + 1)}
-                className={`px-4 py-2 rounded ${
+                className={`px-3 md:px-4 py-2 rounded text-sm md:text-base ${
                   currentPage === index + 1
                     ? "bg-blue-600 text-white"
                     : "bg-gray-200"
@@ -156,7 +160,7 @@ function Employees() {
             <button
               onClick={() => setCurrentPage((prev) => prev + 1)}
               disabled={currentPage === totalPages || totalPages === 0}
-              className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+              className="px-3 md:px-4 py-2 bg-gray-300 rounded disabled:opacity-50 text-sm md:text-base"
             >
               Next
             </button>

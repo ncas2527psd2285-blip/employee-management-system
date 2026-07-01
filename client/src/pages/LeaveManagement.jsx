@@ -13,7 +13,7 @@ function LeaveManagement() {
   const fetchLeaves = async () => {
     try {
       const res = await api.get("/leave");
-      setLeaves(res.data.leaves);
+      setLeaves(res.data.leaves || []);
     } catch (err) {
       console.log("Leave fetch error:", err.message);
     }
@@ -36,17 +36,21 @@ function LeaveManagement() {
     <div className="flex">
       <Sidebar />
 
-      <div className="ml-64 flex-1 bg-gray-100 min-h-screen">
+      <div className="md:ml-64 flex-1 bg-gray-100 min-h-screen">
         <Navbar />
 
-        <div className="p-8">
-          <h1 className="text-3xl font-bold mb-6">Leave Management</h1>
+        <div className="p-4 md:p-8">
+          <h1 className="text-2xl md:text-3xl font-bold mb-6">
+            Leave Management
+          </h1>
 
-          <div className="bg-white rounded-xl shadow p-6">
-            <h2 className="text-xl font-bold mb-4">Leave Requests</h2>
+          <div className="bg-white rounded-xl shadow p-4 md:p-6">
+            <h2 className="text-lg md:text-xl font-bold mb-4">
+              Leave Requests
+            </h2>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="min-w-[1000px] w-full text-sm">
                 <thead>
                   <tr className="bg-blue-600 text-white">
                     <th className="p-3 text-left">Employee ID</th>
@@ -71,13 +75,9 @@ function LeaveManagement() {
                   ) : (
                     leaves.map((leave) => (
                       <tr key={leave._id} className="border-b hover:bg-gray-50">
-                        <td className="p-3">
-                          {leave.employeeId?.employeeId}
-                        </td>
+                        <td className="p-3">{leave.employeeId?.employeeId}</td>
                         <td className="p-3">{leave.employeeId?.name}</td>
-                        <td className="p-3">
-                          {leave.employeeId?.department}
-                        </td>
+                        <td className="p-3">{leave.employeeId?.department}</td>
                         <td className="p-3">{leave.leaveType}</td>
                         <td className="p-3">
                           {new Date(leave.fromDate).toLocaleDateString()}
@@ -85,7 +85,9 @@ function LeaveManagement() {
                         <td className="p-3">
                           {new Date(leave.toDate).toLocaleDateString()}
                         </td>
-                        <td className="p-3">{leave.reason}</td>
+                        <td className="p-3 max-w-[220px] break-words">
+                          {leave.reason}
+                        </td>
                         <td className="p-3">
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -101,12 +103,12 @@ function LeaveManagement() {
                         </td>
                         <td className="p-3">
                           {leave.status === "Pending" ? (
-                            <div className="flex gap-2">
+                            <div className="flex flex-col sm:flex-row gap-2">
                               <button
                                 onClick={() =>
                                   updateStatus(leave._id, "Approved")
                                 }
-                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
+                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
                               >
                                 Approve
                               </button>
@@ -115,7 +117,7 @@ function LeaveManagement() {
                                 onClick={() =>
                                   updateStatus(leave._id, "Rejected")
                                 }
-                                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
                               >
                                 Reject
                               </button>

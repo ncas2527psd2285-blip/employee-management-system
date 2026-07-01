@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -21,43 +22,112 @@ function Login() {
       localStorage.setItem("user", JSON.stringify(response.data.user));
       localStorage.setItem("role", response.data.user.role.toLowerCase());
 
-      if (response.data.user.role.toLowerCase() === "employee") {
-  navigate("/employee-dashboard");
-} else {
-  navigate("/dashboard");
-}
+      toast.success("Login successful");
+
+      navigate("/dashboard");
     } catch (error) {
-      alert(error.response?.data?.message || "Login Failed");
+      toast.error(error.response?.data?.message || "Login Failed");
     }
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "50px auto" }}>
-      <h2>Employee Management System</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 px-4">
+      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
+        <div className="hidden md:flex flex-col justify-center p-10 bg-blue-700 text-white">
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold mb-3">
+              Employee Management System
+            </h1>
+            <p className="text-blue-100">
+              Manage employees, attendance, leave, payroll and reports from one
+              secure dashboard.
+            </p>
+          </div>
 
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-          required
-        />
+          <div className="space-y-4">
+            <div className="bg-white/10 rounded-xl p-4">
+              <h3 className="font-semibold">👥 Employee Records</h3>
+              <p className="text-sm text-blue-100">
+                Add, update and manage employee information.
+              </p>
+            </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-          required
-        />
+            <div className="bg-white/10 rounded-xl p-4">
+              <h3 className="font-semibold">🕒 Attendance Tracking</h3>
+              <p className="text-sm text-blue-100">
+                Monitor daily attendance and working hours.
+              </p>
+            </div>
 
-        <button type="submit" style={{ width: "100%", padding: "10px" }}>
-          Login
-        </button>
-      </form>
+            <div className="bg-white/10 rounded-xl p-4">
+              <h3 className="font-semibold">💰 Payroll Management</h3>
+              <p className="text-sm text-blue-100">
+                Generate salary records and payslips easily.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-8 md:p-12">
+          <div className="text-center mb-8">
+            <div className="mx-auto w-16 h-16 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-3xl mb-4">
+              🔐
+            </div>
+
+            <h2 className="text-3xl font-bold text-gray-800">
+              Admin Login
+            </h2>
+
+            <p className="text-gray-500 mt-2">
+              Sign in to access your HRMS dashboard
+            </p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Email Address
+              </label>
+
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Password
+              </label>
+
+              <input
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-xl font-semibold transition shadow-lg"
+            >
+              Login
+            </button>
+          </form>
+
+          <div className="mt-8 text-center text-sm text-gray-500">
+            <p>© 2026 Employee Management System</p>
+            <p className="mt-1">Secure HR Management Portal</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

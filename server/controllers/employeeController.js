@@ -1,16 +1,78 @@
 const Employee = require("../models/Employee");
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
 
 // ===============================
-// Add Employee
+// Add Employee + Create Login User
 // ===============================
 const addEmployee = async (req, res) => {
   try {
-    const employee = await Employee.create(req.body);
+    const {
+      employeeId,
+      name,
+      email,
+      phone,
+      department,
+      designation,
+      salary,
+      joiningDate,
+      status,
+      gender,
+      address,
+      emergencyContact,
+    } = req.body;
+
+    const existingEmployee = await Employee.findOne({
+      $or: [{ email }, { employeeId }],
+    });
+
+    if (existingEmployee) {
+      return res.status(400).json({
+        success: false,
+        message: "Employee ID or Email already exists",
+      });
+    }
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User account already exists with this email",
+      });
+    }
+
+    const employee = await Employee.create({
+      employeeId,
+      name,
+      email,
+      phone,
+      department,
+      designation,
+      salary,
+      joiningDate,
+      status,
+      gender,
+      address,
+      emergencyContact,
+    });
+
+    const defaultPassword = "Welcome@123";
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(defaultPassword, salt);
+
+    await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: "employee",
+    });
 
     res.status(201).json({
       success: true,
-      message: "Employee Added Successfully",
+      message: "Employee Added Successfully. Login created with default password: Welcome@123",
       employee,
+      defaultPassword,
     });
   } catch (error) {
     res.status(500).json({
@@ -82,6 +144,14 @@ const updateEmployee = async (req, res) => {
       });
     }
 
+    await User.findOneAndUpdate(
+      { email: employee.email },
+      {
+        name: employee.name,
+        email: employee.email,
+      }
+    );
+
     res.status(200).json({
       success: true,
       message: "Employee Updated Successfully",
@@ -96,7 +166,7 @@ const updateEmployee = async (req, res) => {
 };
 
 // ===============================
-// Delete Employee
+// Delete Employee + Login User
 // ===============================
 const deleteEmployee = async (req, res) => {
   try {
@@ -109,9 +179,11 @@ const deleteEmployee = async (req, res) => {
       });
     }
 
+    await User.findOneAndDelete({ email: employee.email });
+
     res.status(200).json({
       success: true,
-      message: "Employee Deleted Successfully",
+      message: "Employee and login account deleted successfully",
     });
   } catch (error) {
     res.status(500).json({

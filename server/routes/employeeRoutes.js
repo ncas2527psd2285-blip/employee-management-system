@@ -4,11 +4,20 @@ const router = express.Router();
 const {
   addEmployee,
   getEmployees,
+  getMyEmployeeProfile,
   updateEmployee,
   deleteEmployee,
 } = require("../controllers/employeeController");
 
 const { protect, authorizeRoles } = require("../middleware/authMiddleware");
+
+// Employee - View own profile
+router.get(
+  "/me",
+  protect,
+  authorizeRoles("employee"),
+  getMyEmployeeProfile
+);
 
 // Create Employee - Admin and HR
 router.post("/", protect, authorizeRoles("admin", "hr"), addEmployee);

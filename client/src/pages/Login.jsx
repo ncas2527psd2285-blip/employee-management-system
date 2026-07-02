@@ -18,13 +18,19 @@ function Login() {
         password,
       });
 
+      const userRole = response.data.user.role.toLowerCase();
+
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
-      localStorage.setItem("role", response.data.user.role.toLowerCase());
+      localStorage.setItem("role", userRole);
 
       toast.success("Login successful");
 
-      navigate("/dashboard");
+      if (userRole === "employee") {
+        navigate("/employee-dashboard");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || "Login Failed");
     }
@@ -39,30 +45,30 @@ function Login() {
               Employee Management System
             </h1>
             <p className="text-blue-100">
-              Manage employees, attendance, leave, payroll and reports from one
-              secure dashboard.
+              Admin and employees can securely manage HRMS activities from one
+              platform.
             </p>
           </div>
 
           <div className="space-y-4">
             <div className="bg-white/10 rounded-xl p-4">
-              <h3 className="font-semibold">👥 Employee Records</h3>
+              <h3 className="font-semibold">👥 Employee Portal</h3>
               <p className="text-sm text-blue-100">
-                Add, update and manage employee information.
+                Employees can view profile, attendance, leaves and payslips.
               </p>
             </div>
 
             <div className="bg-white/10 rounded-xl p-4">
               <h3 className="font-semibold">🕒 Attendance Tracking</h3>
               <p className="text-sm text-blue-100">
-                Monitor daily attendance and working hours.
+                Check-in, check-out and attendance history.
               </p>
             </div>
 
             <div className="bg-white/10 rounded-xl p-4">
               <h3 className="font-semibold">💰 Payroll Management</h3>
               <p className="text-sm text-blue-100">
-                Generate salary records and payslips easily.
+                Payroll with LOP, PF, PT and payslip download.
               </p>
             </div>
           </div>
@@ -75,11 +81,11 @@ function Login() {
             </div>
 
             <h2 className="text-3xl font-bold text-gray-800">
-              Admin Login
+              Login
             </h2>
 
             <p className="text-gray-500 mt-2">
-              Sign in to access your HRMS dashboard
+              Sign in to access your HRMS account
             </p>
           </div>
 

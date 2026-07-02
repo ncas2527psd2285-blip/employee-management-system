@@ -1,9 +1,17 @@
 const Payroll = require("../models/Payroll");
 const Employee = require("../models/Employee");
+const Leave = require("../models/Leave");
 
 exports.generatePayroll = async (req, res) => {
   try {
-    const { employeeId, month, allowances, deductions } = req.body;
+    const {
+      employeeId,
+      month,
+      allowances,
+      pfDeduction,
+      professionalTax,
+      otherDeductions,
+    } = req.body;
 
     const employee = await Employee.findById(employeeId);
 
@@ -23,16 +31,50 @@ exports.generatePayroll = async (req, res) => {
       });
     }
 
-    const basicSalary = employee.salary;
-    const netSalary =
-      Number(basicSalary) + Number(allowances || 0) - Number(deductions || 0);
+    const [year, monthNumber] = month.split("-");
+
+    const startDate = new Date(Number(year), Number(monthNumber) - 1, 1);
+    const endDate = new Date(Number(year), Number(monthNumber), 0);
+
+    const approvedLeaves = await Leave.find({
+      employeeId,
+      status: "Approved",
+      fromDate: { $lte: endDate },
+      toDate: { $gte: startDate },
+    });
+
+    const lopDays = approvedLeaves.reduce(
+      (total, leave) => total + Number(leave.lopDays || 0),
+      0
+    );
+
+    const lopDeduction = lopDays * 500;
+
+    const basicSalary = Number(employee.salary || 0);
+    const allowanceAmount = Number(allowances || 0);
+    const pfAmount = Number(pfDeduction || 0);
+    const ptAmount = Number(professionalTax || 0);
+    const otherAmount = Number(otherDeductions || 0);
+
+    const grossSalary = basicSalary + allowanceAmount;
+
+    const totalDeductions =
+      lopDeduction + pfAmount + ptAmount + otherAmount;
+
+    const netSalary = grossSalary - totalDeductions;
 
     const payroll = await Payroll.create({
       employeeId,
       month,
       basicSalary,
-      allowances,
-      deductions,
+      allowances: allowanceAmount,
+      grossSalary,
+      lopDays,
+      lopDeduction,
+      pfDeduction: pfAmount,
+      professionalTax: ptAmount,
+      otherDeductions: otherAmount,
+      totalDeductions,
       netSalary,
       status: "Generated",
     });
@@ -53,7 +95,7 @@ exports.generatePayroll = async (req, res) => {
 exports.getPayrolls = async (req, res) => {
   try {
     const payrolls = await Payroll.find()
-      .populate("employeeId", "employeeId name department designation salary")
+      .populate("employeeId", "employeeId name department designation salary email")
       .sort({ createdAt: -1 });
 
     res.json({
@@ -81,7 +123,7 @@ exports.getMyPayslips = async (req, res) => {
     }
 
     const payrolls = await Payroll.find({ employeeId: employee._id })
-      .populate("employeeId", "employeeId name department designation salary")
+      .populate("employeeId", "employeeId name department designation salary email")
       .sort({ createdAt: -1 });
 
     res.json({

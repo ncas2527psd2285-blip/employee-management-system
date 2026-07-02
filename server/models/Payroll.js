@@ -23,7 +23,37 @@ const payrollSchema = new mongoose.Schema(
       default: 0,
     },
 
-    deductions: {
+    grossSalary: {
+      type: Number,
+      default: 0,
+    },
+
+    lopDays: {
+      type: Number,
+      default: 0,
+    },
+
+    lopDeduction: {
+      type: Number,
+      default: 0,
+    },
+
+    pfDeduction: {
+      type: Number,
+      default: 0,
+    },
+
+    professionalTax: {
+      type: Number,
+      default: 0,
+    },
+
+    otherDeductions: {
+      type: Number,
+      default: 0,
+    },
+
+    totalDeductions: {
       type: Number,
       default: 0,
     },

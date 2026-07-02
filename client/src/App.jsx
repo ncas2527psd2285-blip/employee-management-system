@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+
 import Dashboard from "./pages/Dashboard";
 import Employees from "./pages/Employees";
 import Attendance from "./pages/Attendance";
@@ -11,6 +12,13 @@ import Reports from "./pages/Reports";
 import LeaveManagement from "./pages/LeaveManagement";
 import LeaveApply from "./pages/LeaveApply";
 import Payroll from "./pages/Payroll";
+
+import EmployeeDashboard from "./pages/EmployeeDashboard";
+import MyProfile from "./pages/MyProfile";
+import MyAttendance from "./pages/MyAttendance";
+import MyLeaves from "./pages/MyLeaves";
+import MyPayslips from "./pages/MyPayslips";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -82,6 +90,51 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["admin"]}>
               <Payroll />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/employee-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["employee"]}>
+              <EmployeeDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-profile"
+          element={
+            <ProtectedRoute allowedRoles={["employee"]}>
+              <MyProfile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-attendance"
+          element={
+            <ProtectedRoute allowedRoles={["employee"]}>
+              <MyAttendance />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-leaves"
+          element={
+            <ProtectedRoute allowedRoles={["employee"]}>
+              <MyLeaves />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-payslips"
+          element={
+            <ProtectedRoute allowedRoles={["employee"]}>
+              <MyPayslips />
             </ProtectedRoute>
           }
         />

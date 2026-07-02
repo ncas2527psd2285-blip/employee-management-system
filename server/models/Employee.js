@@ -48,6 +48,28 @@ const employeeSchema = new mongoose.Schema(
       type: String,
       default: "Active",
     },
+
+    // Employee Portal Enhancements
+    gender: {
+      type: String,
+      enum: ["Male", "Female", "Other"],
+      default: "Male",
+    },
+
+    address: {
+      type: String,
+      default: "",
+    },
+
+    emergencyContact: {
+      type: String,
+      default: "",
+    },
+
+    profileImage: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

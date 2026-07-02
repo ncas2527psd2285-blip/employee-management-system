@@ -10,7 +10,12 @@ const leaveSchema = new mongoose.Schema(
 
     leaveType: {
       type: String,
-      enum: ["Casual Leave", "Sick Leave", "Earned Leave", "Maternity Leave"],
+      enum: [
+        "Casual Leave",
+        "Sick Leave",
+        "Earned Leave",
+        "Maternity Leave",
+      ],
       required: true,
     },
 
@@ -22,6 +27,24 @@ const leaveSchema = new mongoose.Schema(
     toDate: {
       type: Date,
       required: true,
+    },
+
+    // Number of leave days
+    totalDays: {
+      type: Number,
+      default: 1,
+    },
+
+    // Paid leave days
+    paidDays: {
+      type: Number,
+      default: 0,
+    },
+
+    // Loss of Pay days
+    lopDays: {
+      type: Number,
+      default: 0,
     },
 
     reason: {

@@ -40,18 +40,40 @@ const getEmployees = async (req, res) => {
 };
 
 // ===============================
+// Get My Profile - Employee
+// ===============================
+const getMyEmployeeProfile = async (req, res) => {
+  try {
+    const employee = await Employee.findOne({ email: req.user.email });
+
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee profile not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      employee,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ===============================
 // Update Employee
 // ===============================
 const updateEmployee = async (req, res) => {
   try {
-    const employee = await Employee.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!employee) {
       return res.status(404).json({
@@ -102,6 +124,7 @@ const deleteEmployee = async (req, res) => {
 module.exports = {
   addEmployee,
   getEmployees,
+  getMyEmployeeProfile,
   updateEmployee,
   deleteEmployee,
 };

@@ -11,6 +11,20 @@ router.get(
   attendanceController.getMyAttendance
 );
 
+router.post(
+  "/my-checkin",
+  protect,
+  authorizeRoles("employee"),
+  attendanceController.myCheckIn
+);
+
+router.post(
+  "/my-checkout",
+  protect,
+  authorizeRoles("employee"),
+  attendanceController.myCheckOut
+);
+
 router.get(
   "/",
   protect,

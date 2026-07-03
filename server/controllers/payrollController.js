@@ -43,31 +43,25 @@ exports.generatePayroll = async (req, res) => {
       toDate: { $gte: startDate },
     });
 
-    const lopDays = approvedLeaves.reduce(
+    const leaveDetails = approvedLeaves.map((leave) => ({
+      leaveType: leave.leaveType,
+      fromDate: leave.fromDate,
+      toDate: leave.toDate,
+      totalDays: leave.totalDays || 0,
+      paidDays: leave.paidDays || 0,
+      lopDays: leave.lopDays || 0,
+      leaveDeduction: Number(leave.lopDays || 0) * 500,
+    }));
+
+    const lopDays = leaveDetails.reduce(
       (total, leave) => total + Number(leave.lopDays || 0),
       0
     );
-	const leaveDetails = approvedLeaves.map((leave) => ({
-  leaveType: leave.leaveType,
-  fromDate: leave.fromDate,
-  toDate: leave.toDate,
-  totalDays: leave.totalDays || 0,
-  paidDays: leave.paidDays || 0,
-  lopDays: leave.lopDays || 0,
-  leaveDeduction: Number(leave.lopDays || 0) * 500,
-}));
 
-const lopDays = leaveDetails.reduce(
-  (total, leave) => total + Number(leave.lopDays || 0),
-  0
-);
-
-const leaveDeduction = leaveDetails.reduce(
-  (total, leave) => total + Number(leave.leaveDeduction || 0),
-  0
-);
-
-    const lopDeduction = leaveDeduction;
+    const lopDeduction = leaveDetails.reduce(
+      (total, leave) => total + Number(leave.leaveDeduction || 0),
+      0
+    );
 
     const basicSalary = Number(employee.salary || 0);
     const allowanceAmount = Number(allowances || 0);
@@ -88,6 +82,7 @@ const leaveDeduction = leaveDetails.reduce(
       basicSalary,
       allowances: allowanceAmount,
       grossSalary,
+      leaveDetails,
       lopDays,
       lopDeduction,
       pfDeduction: pfAmount,
@@ -96,7 +91,6 @@ const leaveDeduction = leaveDetails.reduce(
       totalDeductions,
       netSalary,
       status: "Generated",
-	Payroll.create
     });
 
     res.status(201).json({

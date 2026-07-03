@@ -18,6 +18,7 @@ import MyProfile from "./pages/MyProfile";
 import MyAttendance from "./pages/MyAttendance";
 import MyLeaves from "./pages/MyLeaves";
 import MyPayslips from "./pages/MyPayslips";
+import Settings from "./pages/Settings";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -138,6 +139,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+	<Route
+  path="/settings"
+  element={
+    <ProtectedRoute allowedRoles={["admin", "hr", "employee"]}>
+      <Settings />
+    </ProtectedRoute>
+  }
+/>
       </Routes>
     </BrowserRouter>
   );

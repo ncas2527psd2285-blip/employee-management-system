@@ -14,6 +14,7 @@ function Sidebar() {
     { name: "Leave Management", path: "/leaves", icon: "🌴" },
     { name: "Payroll", path: "/payroll", icon: "💰" },
     { name: "Reports", path: "/reports", icon: "📊" },
+{ name: "Settings", path: "/settings", icon: "⚙️" },
   ];
 
   return (

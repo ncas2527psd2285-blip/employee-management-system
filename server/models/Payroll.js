@@ -62,6 +62,17 @@ const payrollSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+	leaveDetails: [
+  {
+    leaveType: String,
+    fromDate: Date,
+    toDate: Date,
+    totalDays: Number,
+    paidDays: Number,
+    lopDays: Number,
+    leaveDeduction: Number,
+  },
+],
 
     status: {
       type: String,

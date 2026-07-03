@@ -13,7 +13,9 @@ function Payroll() {
     employeeId: "",
     month: "",
     allowances: 0,
-    deductions: 0,
+    pfDeduction: 0,
+    professionalTax: 0,
+    otherDeductions: 0,
   });
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -27,7 +29,7 @@ function Payroll() {
     try {
       const res = await api.get("/employees");
       setEmployees(res.data.employees || []);
-    } catch (err) {
+    } catch {
       toast.error("Failed to fetch employees");
     }
   };
@@ -36,7 +38,7 @@ function Payroll() {
     try {
       const res = await api.get("/payroll");
       setPayrolls(res.data.payrolls || []);
-    } catch (err) {
+    } catch {
       toast.error("Failed to fetch payrolls");
     }
   };
@@ -44,10 +46,7 @@ function Payroll() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
 
     if (name === "employeeId") {
       const emp = employees.find((item) => item._id === value);
@@ -55,12 +54,14 @@ function Payroll() {
     }
   };
 
-  const calculateNetSalary = () => {
-    const basicSalary = selectedEmployee?.salary || 0;
+  const calculatePreviewNetSalary = () => {
+    const basic = Number(selectedEmployee?.salary || 0);
     const allowances = Number(formData.allowances || 0);
-    const deductions = Number(formData.deductions || 0);
+    const pf = Number(formData.pfDeduction || 0);
+    const pt = Number(formData.professionalTax || 0);
+    const other = Number(formData.otherDeductions || 0);
 
-    return basicSalary + allowances - deductions;
+    return basic + allowances - (pf + pt + other);
   };
 
   const generatePayroll = async (e) => {
@@ -75,7 +76,9 @@ function Payroll() {
         employeeId: "",
         month: "",
         allowances: 0,
-        deductions: 0,
+        pfDeduction: 0,
+        professionalTax: 0,
+        otherDeductions: 0,
       });
 
       setSelectedEmployee(null);
@@ -139,10 +142,28 @@ function Payroll() {
 
                 <input
                   type="number"
-                  name="deductions"
-                  value={formData.deductions}
+                  name="pfDeduction"
+                  value={formData.pfDeduction}
                   onChange={handleChange}
-                  placeholder="Deductions"
+                  placeholder="PF Deduction"
+                  className="border p-3 rounded w-full"
+                />
+
+                <input
+                  type="number"
+                  name="professionalTax"
+                  value={formData.professionalTax}
+                  onChange={handleChange}
+                  placeholder="Professional Tax"
+                  className="border p-3 rounded w-full"
+                />
+
+                <input
+                  type="number"
+                  name="otherDeductions"
+                  value={formData.otherDeductions}
+                  onChange={handleChange}
+                  placeholder="Other Deductions"
                   className="border p-3 rounded w-full"
                 />
 
@@ -153,7 +174,12 @@ function Payroll() {
                   </p>
 
                   <p>
-                    <strong>Net Salary:</strong> ₹{calculateNetSalary()}
+                    <strong>Preview Net Salary:</strong> ₹
+                    {calculatePreviewNetSalary()}
+                  </p>
+
+                  <p className="text-xs text-gray-500">
+                    Leave deduction will be calculated automatically after payroll generation.
                   </p>
                 </div>
 
@@ -180,10 +206,7 @@ function Payroll() {
                 <div className="border rounded-lg p-4">
                   <p className="text-gray-500 text-sm">Generated</p>
                   <h3 className="text-2xl font-bold text-blue-600">
-                    {
-                      payrolls.filter((item) => item.status === "Generated")
-                        .length
-                    }
+                    {payrolls.filter((item) => item.status === "Generated").length}
                   </h3>
                 </div>
 
@@ -197,10 +220,10 @@ function Payroll() {
 
               <div className="mt-6 bg-gray-100 p-4 rounded-lg text-sm md:text-base">
                 <p className="text-gray-600">
-                  Payroll system calculates salary using:
+                  Payroll calculation:
                 </p>
                 <p className="font-semibold mt-2">
-                  Net Salary = Basic Salary + Allowances - Deductions
+                  Net Salary = Gross Salary - Leave Deduction - PF - PT - Other Deductions
                 </p>
               </div>
             </div>
@@ -212,7 +235,7 @@ function Payroll() {
             </h2>
 
             <div className="overflow-x-auto">
-              <table className="min-w-[1000px] w-full text-sm">
+              <table className="min-w-[1500px] w-full text-sm">
                 <thead>
                   <tr className="bg-blue-600 text-white">
                     <th className="p-3 text-left">Employee ID</th>
@@ -221,7 +244,13 @@ function Payroll() {
                     <th className="p-3 text-left">Month</th>
                     <th className="p-3 text-left">Basic</th>
                     <th className="p-3 text-left">Allowances</th>
-                    <th className="p-3 text-left">Deductions</th>
+                    <th className="p-3 text-left">Gross</th>
+                    <th className="p-3 text-left">Leave Details</th>
+                    <th className="p-3 text-left">Leave Deduction</th>
+                    <th className="p-3 text-left">PF</th>
+                    <th className="p-3 text-left">PT</th>
+                    <th className="p-3 text-left">Other Deduction</th>
+                    <th className="p-3 text-left">Total Deduction</th>
                     <th className="p-3 text-left">Net Salary</th>
                     <th className="p-3 text-left">Status</th>
                     <th className="p-3 text-left">Action</th>
@@ -231,32 +260,85 @@ function Payroll() {
                 <tbody>
                   {payrolls.length === 0 ? (
                     <tr>
-                      <td
-                        colSpan="10"
-                        className="text-center p-6 text-gray-500"
-                      >
+                      <td colSpan="16" className="text-center p-6 text-gray-500">
                         No payroll records found
                       </td>
                     </tr>
                   ) : (
                     payrolls.map((payroll) => (
-                      <tr
-                        key={payroll._id}
-                        className="border-b hover:bg-gray-50"
-                      >
+                      <tr key={payroll._id} className="border-b hover:bg-gray-50">
                         <td className="p-3">
                           {payroll.employeeId?.employeeId}
                         </td>
+
                         <td className="p-3">{payroll.employeeId?.name}</td>
+
                         <td className="p-3">
                           {payroll.employeeId?.department}
                         </td>
+
                         <td className="p-3">{payroll.month}</td>
-                        <td className="p-3">₹{payroll.basicSalary}</td>
-                        <td className="p-3">₹{payroll.allowances}</td>
-                        <td className="p-3">₹{payroll.deductions}</td>
-                        <td className="p-3 font-bold">
-                          ₹{payroll.netSalary}
+
+                        <td className="p-3">₹{payroll.basicSalary || 0}</td>
+
+                        <td className="p-3">₹{payroll.allowances || 0}</td>
+
+                        <td className="p-3">₹{payroll.grossSalary || 0}</td>
+
+                        <td className="p-3">
+                          {payroll.leaveDetails?.length > 0 ? (
+                            <div className="space-y-2">
+                              {payroll.leaveDetails.map((leave, index) => (
+                                <div
+                                  key={index}
+                                  className="border rounded p-2 text-xs bg-gray-50 min-w-[220px]"
+                                >
+                                  <p>
+                                    <b>Type:</b> {leave.leaveType}
+                                  </p>
+                                  <p>
+                                    <b>Date:</b>{" "}
+                                    {leave.fromDate
+                                      ? new Date(leave.fromDate).toLocaleDateString()
+                                      : "-"}{" "}
+                                    to{" "}
+                                    {leave.toDate
+                                      ? new Date(leave.toDate).toLocaleDateString()
+                                      : "-"}
+                                  </p>
+                                  <p>
+                                    <b>Total Days:</b> {leave.totalDays || 0}
+                                  </p>
+                                  <p>
+                                    <b>Paid Days:</b> {leave.paidDays || 0}
+                                  </p>
+                                  <p className="text-red-600">
+                                    <b>LOP Days:</b> {leave.lopDays || 0}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+
+                        <td className="p-3 text-red-600 font-semibold">
+                          ₹{payroll.lopDeduction || 0}
+                        </td>
+
+                        <td className="p-3">₹{payroll.pfDeduction || 0}</td>
+
+                        <td className="p-3">₹{payroll.professionalTax || 0}</td>
+
+                        <td className="p-3">₹{payroll.otherDeductions || 0}</td>
+
+                        <td className="p-3 text-red-600 font-semibold">
+                          ₹{payroll.totalDeductions || 0}
+                        </td>
+
+                        <td className="p-3 font-bold text-green-700">
+                          ₹{payroll.netSalary || 0}
                         </td>
 
                         <td className="p-3">

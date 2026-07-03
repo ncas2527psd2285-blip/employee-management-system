@@ -12,6 +12,7 @@ function EmployeeSidebar() {
     { name: "My Attendance", path: "/my-attendance", icon: "🕒" },
     { name: "My Leaves", path: "/my-leaves", icon: "🌴" },
     { name: "My Payslips", path: "/my-payslips", icon: "💰" },
+	{ name: "Settings", path: "/settings", icon: "⚙️" },
   ];
 
   return (

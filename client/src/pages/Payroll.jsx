@@ -12,10 +12,10 @@ function Payroll() {
   const [formData, setFormData] = useState({
     employeeId: "",
     month: "",
-    allowances: 0,
-    pfDeduction: 0,
-    professionalTax: 0,
-    otherDeductions: 0,
+    allowances: "",
+    pfDeduction: "",
+    professionalTax: "",
+    otherDeductions: "",
   });
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -75,10 +75,10 @@ function Payroll() {
       setFormData({
         employeeId: "",
         month: "",
-        allowances: 0,
-        pfDeduction: 0,
-        professionalTax: 0,
-        otherDeductions: 0,
+        allowances: "",
+        pfDeduction: "",
+        professionalTax: "",
+        otherDeductions: "",
       });
 
       setSelectedEmployee(null);
@@ -107,65 +107,95 @@ function Payroll() {
               </h2>
 
               <form onSubmit={generatePayroll} className="space-y-4">
-                <select
-                  name="employeeId"
-                  value={formData.employeeId}
-                  onChange={handleChange}
-                  required
-                  className="border p-3 rounded w-full"
-                >
-                  <option value="">Select Employee</option>
-                  {employees.map((emp) => (
-                    <option key={emp._id} value={emp._id}>
-                      {emp.employeeId} - {emp.name}
-                    </option>
-                  ))}
-                </select>
+                <div>
+                  <label className="block mb-2 font-semibold text-gray-700">
+                    Select Employee
+                  </label>
+                  <select
+                    name="employeeId"
+                    value={formData.employeeId}
+                    onChange={handleChange}
+                    required
+                    className="border p-3 rounded w-full"
+                  >
+                    <option value="">Select Employee</option>
+                    {employees.map((emp) => (
+                      <option key={emp._id} value={emp._id}>
+                        {emp.employeeId} - {emp.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                <input
-                  type="month"
-                  name="month"
-                  value={formData.month}
-                  onChange={handleChange}
-                  required
-                  className="border p-3 rounded w-full"
-                />
+                <div>
+                  <label className="block mb-2 font-semibold text-gray-700">
+                    Payroll Month
+                  </label>
+                  <input
+                    type="month"
+                    name="month"
+                    value={formData.month}
+                    onChange={handleChange}
+                    required
+                    className="border p-3 rounded w-full"
+                  />
+                </div>
 
-                <input
-                  type="number"
-                  name="allowances"
-                  value={formData.allowances}
-                  onChange={handleChange}
-                  placeholder="Allowances"
-                  className="border p-3 rounded w-full"
-                />
+                <div>
+                  <label className="block mb-2 font-semibold text-gray-700">
+                    Allowances (₹)
+                  </label>
+                  <input
+                    type="number"
+                    name="allowances"
+                    value={formData.allowances}
+                    onChange={handleChange}
+                    placeholder="Enter Allowances"
+                    className="border p-3 rounded w-full"
+                  />
+                </div>
 
-                <input
-                  type="number"
-                  name="pfDeduction"
-                  value={formData.pfDeduction}
-                  onChange={handleChange}
-                  placeholder="PF Deduction"
-                  className="border p-3 rounded w-full"
-                />
+                <div>
+                  <label className="block mb-2 font-semibold text-gray-700">
+                    Provident Fund (PF) (₹)
+                  </label>
+                  <input
+                    type="number"
+                    name="pfDeduction"
+                    value={formData.pfDeduction}
+                    onChange={handleChange}
+                    placeholder="Enter PF Deduction"
+                    className="border p-3 rounded w-full"
+                  />
+                </div>
 
-                <input
-                  type="number"
-                  name="professionalTax"
-                  value={formData.professionalTax}
-                  onChange={handleChange}
-                  placeholder="Professional Tax"
-                  className="border p-3 rounded w-full"
-                />
+                <div>
+                  <label className="block mb-2 font-semibold text-gray-700">
+                    Professional Tax (PT) (₹)
+                  </label>
+                  <input
+                    type="number"
+                    name="professionalTax"
+                    value={formData.professionalTax}
+                    onChange={handleChange}
+                    placeholder="Enter Professional Tax"
+                    className="border p-3 rounded w-full"
+                  />
+                </div>
 
-                <input
-                  type="number"
-                  name="otherDeductions"
-                  value={formData.otherDeductions}
-                  onChange={handleChange}
-                  placeholder="Other Deductions"
-                  className="border p-3 rounded w-full"
-                />
+                <div>
+                  <label className="block mb-2 font-semibold text-gray-700">
+                    Other Deductions (₹)
+                  </label>
+                  <input
+                    type="number"
+                    name="otherDeductions"
+                    value={formData.otherDeductions}
+                    onChange={handleChange}
+                    placeholder="Enter Other Deductions"
+                    className="border p-3 rounded w-full"
+                  />
+                </div>
 
                 <div className="bg-gray-100 rounded p-4 space-y-2 text-sm md:text-base">
                   <p>
@@ -219,9 +249,7 @@ function Payroll() {
               </div>
 
               <div className="mt-6 bg-gray-100 p-4 rounded-lg text-sm md:text-base">
-                <p className="text-gray-600">
-                  Payroll calculation:
-                </p>
+                <p className="text-gray-600">Payroll calculation:</p>
                 <p className="font-semibold mt-2">
                   Net Salary = Gross Salary - Leave Deduction - PF - PT - Other Deductions
                 </p>
@@ -267,22 +295,12 @@ function Payroll() {
                   ) : (
                     payrolls.map((payroll) => (
                       <tr key={payroll._id} className="border-b hover:bg-gray-50">
-                        <td className="p-3">
-                          {payroll.employeeId?.employeeId}
-                        </td>
-
+                        <td className="p-3">{payroll.employeeId?.employeeId}</td>
                         <td className="p-3">{payroll.employeeId?.name}</td>
-
-                        <td className="p-3">
-                          {payroll.employeeId?.department}
-                        </td>
-
+                        <td className="p-3">{payroll.employeeId?.department}</td>
                         <td className="p-3">{payroll.month}</td>
-
                         <td className="p-3">₹{payroll.basicSalary || 0}</td>
-
                         <td className="p-3">₹{payroll.allowances || 0}</td>
-
                         <td className="p-3">₹{payroll.grossSalary || 0}</td>
 
                         <td className="p-3">
@@ -293,9 +311,7 @@ function Payroll() {
                                   key={index}
                                   className="border rounded p-2 text-xs bg-gray-50 min-w-[220px]"
                                 >
-                                  <p>
-                                    <b>Type:</b> {leave.leaveType}
-                                  </p>
+                                  <p><b>Type:</b> {leave.leaveType}</p>
                                   <p>
                                     <b>Date:</b>{" "}
                                     {leave.fromDate
@@ -306,12 +322,8 @@ function Payroll() {
                                       ? new Date(leave.toDate).toLocaleDateString()
                                       : "-"}
                                   </p>
-                                  <p>
-                                    <b>Total Days:</b> {leave.totalDays || 0}
-                                  </p>
-                                  <p>
-                                    <b>Paid Days:</b> {leave.paidDays || 0}
-                                  </p>
+                                  <p><b>Total Days:</b> {leave.totalDays || 0}</p>
+                                  <p><b>Paid Days:</b> {leave.paidDays || 0}</p>
                                   <p className="text-red-600">
                                     <b>LOP Days:</b> {leave.lopDays || 0}
                                   </p>
@@ -326,17 +338,12 @@ function Payroll() {
                         <td className="p-3 text-red-600 font-semibold">
                           ₹{payroll.lopDeduction || 0}
                         </td>
-
                         <td className="p-3">₹{payroll.pfDeduction || 0}</td>
-
                         <td className="p-3">₹{payroll.professionalTax || 0}</td>
-
                         <td className="p-3">₹{payroll.otherDeductions || 0}</td>
-
                         <td className="p-3 text-red-600 font-semibold">
                           ₹{payroll.totalDeductions || 0}
                         </td>
-
                         <td className="p-3 font-bold text-green-700">
                           ₹{payroll.netSalary || 0}
                         </td>

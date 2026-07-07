@@ -13,10 +13,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await api.post("/auth/login", {
-        email,
-        password,
-      });
+      const response = await api.post("/auth/login", { email, password });
 
       const userRole = response.data.user.role.toLowerCase();
 
@@ -37,55 +34,71 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 px-4">
-      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
-        <div className="hidden md:flex flex-col justify-center p-10 bg-blue-700 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2">
+        <div className="bg-blue-700 text-white p-8 md:p-12 flex flex-col justify-center">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-3">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl mb-5">
+              🏢
+            </div>
+
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
               Employee Management System
             </h1>
-            <p className="text-blue-100">
-              Admin and employees can securely manage HRMS activities from one
-              platform.
+
+            <p className="text-blue-100 leading-relaxed">
+              A secure HRMS portal for administrators and employees to manage
+              attendance, leave, payroll, reports, and payslips.
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-white/10 rounded-xl p-4">
-              <h3 className="font-semibold">👥 Employee Portal</h3>
+              <p className="text-2xl mb-2">👨‍💼</p>
+              <h3 className="font-semibold">Employee Portal</h3>
               <p className="text-sm text-blue-100">
-                Employees can view profile, attendance, leaves and payslips.
+                Profile, attendance, leaves and payslips.
               </p>
             </div>
 
             <div className="bg-white/10 rounded-xl p-4">
-              <h3 className="font-semibold">🕒 Attendance Tracking</h3>
+              <p className="text-2xl mb-2">👩‍💻</p>
+              <h3 className="font-semibold">Admin Portal</h3>
               <p className="text-sm text-blue-100">
-                Check-in, check-out and attendance history.
+                Manage employees, payroll and reports.
               </p>
             </div>
 
             <div className="bg-white/10 rounded-xl p-4">
-              <h3 className="font-semibold">💰 Payroll Management</h3>
+              <p className="text-2xl mb-2">🕒</p>
+              <h3 className="font-semibold">Attendance</h3>
               <p className="text-sm text-blue-100">
-                Payroll with LOP, PF, PT and payslip download.
+                Check-in, check-out and history tracking.
+              </p>
+            </div>
+
+            <div className="bg-white/10 rounded-xl p-4">
+              <p className="text-2xl mb-2">💰</p>
+              <h3 className="font-semibold">Payroll</h3>
+              <p className="text-sm text-blue-100">
+                PF, PT, LOP deduction and PDF payslips.
               </p>
             </div>
           </div>
-        </div>
 
-        <div className="p-8 md:p-12">
+         
+        <div className="p-8 md:p-12 flex flex-col justify-center">
           <div className="text-center mb-8">
             <div className="mx-auto w-16 h-16 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-3xl mb-4">
               🔐
             </div>
 
             <h2 className="text-3xl font-bold text-gray-800">
-              Login
+              Secure Login
             </h2>
 
             <p className="text-gray-500 mt-2">
-              Sign in to access your HRMS account
+              Login using your Admin, HR or Employee credentials
             </p>
           </div>
 
@@ -94,13 +107,12 @@ function Login() {
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Email Address
               </label>
-
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Enter your registered email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
                 required
               />
             </div>
@@ -109,13 +121,12 @@ function Login() {
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Password
               </label>
-
               <input
                 type="password"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
                 required
               />
             </div>
@@ -124,14 +135,25 @@ function Login() {
               type="submit"
               className="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-xl font-semibold transition shadow-lg"
             >
-              Login
+              Login to HRMS
             </button>
           </form>
 
-          <div className="mt-8 text-center text-sm text-gray-500">
-            <p>© 2026 Employee Management System</p>
-            <p className="mt-1">Secure HR Management Portal</p>
+          <div className="mt-8 grid grid-cols-2 gap-3 text-center text-sm">
+            <div className="border rounded-xl p-3">
+              <p className="font-semibold text-gray-700">Employee</p>
+              <p className="text-gray-500">Own portal access</p>
+            </div>
+
+            <div className="border rounded-xl p-3">
+              <p className="font-semibold text-gray-700">Admin / HR</p>
+              <p className="text-gray-500">Management access</p>
+            </div>
           </div>
+
+          <p className="text-center text-sm text-gray-400 mt-8">
+            © 2026 Employee Management System
+          </p>
         </div>
       </div>
     </div>

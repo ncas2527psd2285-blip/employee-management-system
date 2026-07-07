@@ -40,15 +40,23 @@ function MyProfile() {
         <Navbar />
 
         <div className="p-4 md:p-8">
-          <h1 className="text-3xl font-bold mb-6">My Profile</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-6">My Profile</h1>
 
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="w-28 h-28 rounded-full bg-blue-100 flex items-center justify-center text-5xl">
-                👤
+              <div className="w-28 h-28 rounded-full bg-blue-100 overflow-hidden flex items-center justify-center text-5xl">
+                {employee.profileImage ? (
+                  <img
+                    src={employee.profileImage}
+                    alt={employee.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span>👤</span>
+                )}
               </div>
 
-              <div>
+              <div className="text-center md:text-left">
                 <h2 className="text-2xl font-bold">{employee.name}</h2>
                 <p className="text-gray-500">{employee.designation}</p>
                 <p className="text-blue-600 font-medium">
@@ -59,9 +67,7 @@ function MyProfile() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
               <div>
-                <label className="font-semibold text-gray-600">
-                  Employee ID
-                </label>
+                <label className="font-semibold text-gray-600">Employee ID</label>
                 <p>{employee.employeeId}</p>
               </div>
 
@@ -86,14 +92,13 @@ function MyProfile() {
                 <label className="font-semibold text-gray-600">
                   Joining Date
                 </label>
-                <p>
-                  {new Date(employee.joiningDate).toLocaleDateString()}
-                </p>
+                <p>{new Date(employee.joiningDate).toLocaleDateString()}</p>
               </div>
 
               <div>
                 <label className="font-semibold text-gray-600">Status</label>
-                <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                <br />
+                <span className="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full">
                   {employee.status}
                 </span>
               </div>

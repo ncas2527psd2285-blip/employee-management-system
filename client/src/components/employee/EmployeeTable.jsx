@@ -1,8 +1,4 @@
-function EmployeeTable({
-  employees,
-  onEdit,
-  onDelete,
-}) {
+function EmployeeTable({ employees, onEdit, onDelete }) {
   if (employees.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
@@ -13,51 +9,51 @@ function EmployeeTable({
 
   return (
     <div className="bg-white rounded-lg shadow overflow-x-auto">
-      <table className="min-w-full">
-
+      <table className="min-w-[900px] w-full text-sm">
         <thead className="bg-blue-600 text-white">
           <tr>
-            <th className="p-3">Employee ID</th>
-            <th className="p-3">Name</th>
-            <th className="p-3">Department</th>
-            <th className="p-3">Designation</th>
-            <th className="p-3">Salary</th>
-            <th className="p-3">Status</th>
-            <th className="p-3">Actions</th>
+            <th className="p-3 text-left">Photo</th>
+            <th className="p-3 text-left">Employee ID</th>
+            <th className="p-3 text-left">Name</th>
+            <th className="p-3 text-left">Department</th>
+            <th className="p-3 text-left">Designation</th>
+            <th className="p-3 text-left">Salary</th>
+            <th className="p-3 text-left">Status</th>
+            <th className="p-3 text-left">Actions</th>
           </tr>
         </thead>
 
         <tbody>
-
           {employees.map((emp) => (
-            <tr
-              key={emp._id}
-              className="border-b hover:bg-gray-50"
-            >
+            <tr key={emp._id} className="border-b hover:bg-gray-50">
+              <td className="p-3">
+                <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
+                  {emp.profileImage ? (
+                    <img
+                      src={emp.profileImage}
+                      alt={emp.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-xl">👤</span>
+                  )}
+                </div>
+              </td>
+
               <td className="p-3">{emp.employeeId}</td>
 
-              <td className="p-3 font-medium">
-                {emp.name}
-              </td>
+              <td className="p-3 font-medium">{emp.name}</td>
 
-              <td className="p-3">
-                {emp.department}
-              </td>
+              <td className="p-3">{emp.department}</td>
 
-              <td className="p-3">
-                {emp.designation}
-              </td>
+              <td className="p-3">{emp.designation}</td>
 
-              <td className="p-3">
-                ₹{emp.salary}
-              </td>
+              <td className="p-3">₹{emp.salary}</td>
 
               <td className="p-3">
                 <span
                   className={`px-3 py-1 rounded-full text-sm text-white ${
-                    emp.status === "Active"
-                      ? "bg-green-600"
-                      : "bg-red-600"
+                    emp.status === "Active" ? "bg-green-600" : "bg-red-600"
                   }`}
                 >
                   {emp.status}
@@ -65,9 +61,7 @@ function EmployeeTable({
               </td>
 
               <td className="p-3">
-
                 <div className="flex gap-2">
-
                   <button
                     onClick={() => onEdit(emp)}
                     className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
@@ -81,15 +75,11 @@ function EmployeeTable({
                   >
                     Delete
                   </button>
-
                 </div>
-
               </td>
             </tr>
           ))}
-
         </tbody>
-
       </table>
     </div>
   );

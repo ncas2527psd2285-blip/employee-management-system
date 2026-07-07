@@ -2,9 +2,7 @@ const Employee = require("../models/Employee");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
-// ===============================
 // Add Employee + Create Login User
-// ===============================
 const addEmployee = async (req, res) => {
   try {
     const {
@@ -42,6 +40,8 @@ const addEmployee = async (req, res) => {
       });
     }
 
+    const profileImage = req.file ? req.file.path : "";
+
     const employee = await Employee.create({
       employeeId,
       name,
@@ -55,6 +55,7 @@ const addEmployee = async (req, res) => {
       gender,
       address,
       emergencyContact,
+      profileImage,
     });
 
     const defaultPassword = "Welcome@123";
@@ -70,7 +71,8 @@ const addEmployee = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Employee Added Successfully. Login created with default password: Welcome@123",
+      message:
+        "Employee Added Successfully. Login created with default password: Welcome@123",
       employee,
       defaultPassword,
     });
@@ -82,9 +84,7 @@ const addEmployee = async (req, res) => {
   }
 };
 
-// ===============================
 // Get All Employees
-// ===============================
 const getEmployees = async (req, res) => {
   try {
     const employees = await Employee.find().sort({ createdAt: -1 });
@@ -101,9 +101,7 @@ const getEmployees = async (req, res) => {
   }
 };
 
-// ===============================
 // Get My Profile - Employee
-// ===============================
 const getMyEmployeeProfile = async (req, res) => {
   try {
     const employee = await Employee.findOne({ email: req.user.email });
@@ -127,25 +125,35 @@ const getMyEmployeeProfile = async (req, res) => {
   }
 };
 
-// ===============================
 // Update Employee
-// ===============================
 const updateEmployee = async (req, res) => {
   try {
-    const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const oldEmployee = await Employee.findById(req.params.id);
 
-    if (!employee) {
+    if (!oldEmployee) {
       return res.status(404).json({
         success: false,
         message: "Employee not found",
       });
     }
 
+    const updateData = { ...req.body };
+
+    if (req.file) {
+      updateData.profileImage = req.file.path;
+    }
+
+    const employee = await Employee.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
     await User.findOneAndUpdate(
-      { email: employee.email },
+      { email: oldEmployee.email },
       {
         name: employee.name,
         email: employee.email,
@@ -165,9 +173,7 @@ const updateEmployee = async (req, res) => {
   }
 };
 
-// ===============================
 // Delete Employee + Login User
-// ===============================
 const deleteEmployee = async (req, res) => {
   try {
     const employee = await Employee.findByIdAndDelete(req.params.id);

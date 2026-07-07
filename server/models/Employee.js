@@ -6,37 +6,45 @@ const employeeSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      trim: true,
     },
 
     name: {
       type: String,
       required: true,
+      trim: true,
     },
 
     email: {
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
     },
 
     phone: {
       type: String,
       required: true,
+      trim: true,
     },
 
     department: {
       type: String,
       required: true,
+      trim: true,
     },
 
     designation: {
       type: String,
       required: true,
+      trim: true,
     },
 
     salary: {
       type: Number,
       required: true,
+      min: 0,
     },
 
     joiningDate: {
@@ -46,10 +54,10 @@ const employeeSchema = new mongoose.Schema(
 
     status: {
       type: String,
+      enum: ["Active", "Inactive"],
       default: "Active",
     },
 
-    // Employee Portal Enhancements
     gender: {
       type: String,
       enum: ["Male", "Female", "Other"],
@@ -66,6 +74,7 @@ const employeeSchema = new mongoose.Schema(
       default: "",
     },
 
+    // Employee profile photo URL (Cloudinary)
     profileImage: {
       type: String,
       default: "",

@@ -85,8 +85,8 @@ function Login() {
               </p>
             </div>
           </div>
+        </div>
 
-         
         <div className="p-8 md:p-12 flex flex-col justify-center">
           <div className="text-center mb-8">
             <div className="mx-auto w-16 h-16 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-3xl mb-4">

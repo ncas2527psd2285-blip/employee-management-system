@@ -93,6 +93,8 @@ function EmployeeForm({ onClose, refreshEmployees, employee = null }) {
     }
   };
 
+console.log("PHOTO EMPLOYEE FORM LOADED"); 
+
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
       <div className="bg-white w-full max-w-3xl rounded-xl shadow-xl p-6 md:p-8 max-h-[90vh] overflow-y-auto">

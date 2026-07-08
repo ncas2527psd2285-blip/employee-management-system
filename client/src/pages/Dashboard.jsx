@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import {
   BarChart,
@@ -30,6 +31,32 @@ function Dashboard() {
       console.log("Dashboard error:", err.message);
     }
   };
+
+const generateJuneData = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await api.post(
+      "/seed/june",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    toast.success(res.data.message);
+
+    fetchDashboardStats();
+  } catch (err) {
+    console.log(err);
+
+    toast.error(
+      err.response?.data?.message || "Failed to generate June data"
+    );
+  }
+};
 
   const StatCard = ({ title, value, icon, color }) => (
     <div className="bg-white p-4 md:p-6 rounded-xl shadow hover:shadow-lg transition">
@@ -73,6 +100,14 @@ function Dashboard() {
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
               HR Management Dashboard
             </h1>
+	<div className="mt-4">
+  <button
+    onClick={generateJuneData}
+    className="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-lg shadow"
+  >
+    🌱 Generate June Demo Data
+  </button>
+</div>
             <p className="text-gray-500 mt-1 text-sm md:text-base">
               Overview of employees, attendance, leaves and departments
             </p>

@@ -10,6 +10,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const leaveRoutes = require("./routes/leaveRoutes");
 const payrollRoutes = require("./routes/payrollRoutes");
 const userRoutes = require("./routes/userRoutes");
+const seedRoutes = require("./routes/seedRoutes");
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/leave", leaveRoutes);
 app.use("/api/payroll", payrollRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/seed", seedRoutes);
 
 app.get("/", (req, res) => {
   res.send("Employee Management System API is Running 🚀");

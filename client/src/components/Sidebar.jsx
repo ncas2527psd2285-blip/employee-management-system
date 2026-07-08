@@ -6,16 +6,22 @@ function Sidebar() {
   const user = JSON.parse(localStorage.getItem("user"));
   const [isOpen, setIsOpen] = useState(false);
 
-  const menuItems = [
-    { name: "Dashboard", path: "/dashboard", icon: "🏠" },
-    { name: "Employees", path: "/employees", icon: "👥" },
-    { name: "Attendance", path: "/attendance", icon: "🕒" },
-    { name: "Apply Leave", path: "/apply-leave", icon: "📝" },
-    { name: "Leave Management", path: "/leaves", icon: "🌴" },
-    { name: "Payroll", path: "/payroll", icon: "💰" },
-    { name: "Reports", path: "/reports", icon: "📊" },
-{ name: "Settings", path: "/settings", icon: "⚙️" },
-  ];
+ const menuItems = [
+  { name: "Dashboard", path: "/dashboard", icon: "🏠" },
+  { name: "Employees", path: "/employees", icon: "👥" },
+  { name: "Attendance", path: "/attendance", icon: "🕒" },
+  { name: "Apply Leave", path: "/apply-leave", icon: "📝" },
+  { name: "Leave Management", path: "/leaves", icon: "🌴" },
+  { name: "Payroll", path: "/payroll", icon: "💰" },
+  { name: "Reports", path: "/reports", icon: "📊" },
+
+  // Show only for Admin and HR
+  ...(user?.role === "admin" || user?.role === "hr"
+    ? [{ name: "User Management", path: "/users", icon: "👤" }]
+    : []),
+
+  { name: "Settings", path: "/settings", icon: "⚙️" },
+];
 
   return (
     <>

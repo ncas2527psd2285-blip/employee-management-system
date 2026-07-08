@@ -18,6 +18,8 @@ import MyAttendance from "./pages/MyAttendance";
 import MyLeaves from "./pages/MyLeaves";
 import MyPayslips from "./pages/MyPayslips";
 import Settings from "./pages/Settings";
+import UserManagement from "./pages/UserManagement";
+
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -141,6 +143,22 @@ function App() {
   element={
     <ProtectedRoute allowedRoles={["admin", "hr", "employee"]}>
       <Settings />
+    </ProtectedRoute>
+  }
+/>
+	<Route
+  path="/users"
+  element={
+    <ProtectedRoute allowedRoles={["admin", "hr"]}>
+      <UserManagement />
+    </ProtectedRoute>
+  }
+/>
+	<Route
+  path="/users"
+  element={
+    <ProtectedRoute allowedRoles={["admin", "hr"]}>
+      <UserManagement />
     </ProtectedRoute>
   }
 />

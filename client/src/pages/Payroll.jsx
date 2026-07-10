@@ -274,90 +274,104 @@ function Payroll() {
           </div>
 
           <div className="bg-white rounded-xl shadow p-4 md:p-6">
-            <h2 className="text-lg md:text-xl font-bold mb-4">
-              Payroll History
-            </h2>
+  <h2 className="text-lg md:text-xl font-bold mb-4">
+    Payroll History
+  </h2>
 
-            <div className="overflow-x-auto">
-              <table className="w-full table-auto text-sm">
-                <thead>
-                  <tr className="bg-blue-600 text-white">
-                    <td className="px-2 py-2">
-  {payroll.employeeId?.employeeId}
-</td>
+  <div className="overflow-x-auto">
+    <table className="w-full table-auto text-sm">
+      <thead>
+        <tr className="bg-blue-600 text-white">
+          <th className="p-3 text-left">Employee ID</th>
+          <th className="p-3 text-left">Employee Name</th>
+          <th className="p-3 text-left">Month</th>
+          <th className="p-3 text-left">Basic</th>
+          <th className="p-3 text-left">Allowances</th>
+          <th className="p-3 text-left">Leave Deduction</th>
+          <th className="p-3 text-left">Total Deduction</th>
+          <th className="p-3 text-left">Net Salary</th>
+          <th className="p-3 text-left">Status</th>
+          <th className="p-3 text-left">Action</th>
+        </tr>
+      </thead>
 
-<td className="px-2 py-2">
-  {payroll.employeeId?.name}
-</td>
-                    <th className="p-3 text-left">Month</th>
-                    <th className="p-3 text-left">Basic</th>
-                    <th className="p-3 text-left">Allowances</th>
-                    <th className="p-3 text-left">Leave Deduction</th>
-                    <th className="p-3 text-left">Total Deduction</th>
-                    <th className="p-3 text-left">Net Salary</th>
-                    <th className="p-3 text-left">Status</th>
-                    <th className="p-3 text-left">Action</th>
-                  </tr>
-                </thead>
+      <tbody>
+        {payrolls.length === 0 ? (
+          <tr>
+            <td
+              colSpan="10"
+              className="text-center p-6 text-gray-500"
+            >
+              No payroll records found
+            </td>
+          </tr>
+        ) : (
+          payrolls.map((payroll) => (
+            <tr
+              key={payroll._id}
+              className="border-b hover:bg-gray-50"
+            >
 
-                <tbody>
-                  {payrolls.length === 0 ? (
-                    <tr>
-                      <td colSpan="16" className="text-center p-6 text-gray-500">
-                        No payroll records found
-                      </td>
-                    </tr>
-                  ) : (
-                    payrolls.map((payroll) => (
-                      <tr key={payroll._id} className="border-b hover:bg-gray-50">
-                        <td className="px-2 py-2">
-  {payroll.employeeId?.employeeId}
-</td>
+              <td className="px-2 py-2">
+                {payroll.employeeId?.employeeId || "-"}
+              </td>
 
-<td className="px-2 py-2">
-  {payroll.employeeId?.name}
-</td>
-                        <td className="px-2 py-2">{payroll.month}</td>
-                        <td className="px-2 py-2">₹{payroll.basicSalary || 0}</td>
-                        <td className="px-2 py-2">₹{payroll.allowances || 0}</td>
-                        
+              <td className="px-2 py-2">
+                {payroll.employeeId?.name || "-"}
+              </td>
 
-                       <td className="p-3 text-red-600 font-semibold">
-                          ₹{payroll.lopDeduction || 0}
-                        </td>
-                        <td className="p-3 text-red-600 font-semibold">
-                          ₹{payroll.totalDeductions || 0}
-                        </td>
-                        <td className="p-3 font-bold text-green-700">
-                          ₹{payroll.netSalary || 0}
-                        </td>
+              <td className="px-2 py-2">
+                {payroll.month}
+              </td>
 
-                        <td className="px-2 py-2">
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                              payroll.status === "Paid"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-blue-100 text-blue-700"
-                            }`}
-                          >
-                            {payroll.status}
-                          </span>
-                        </td>
+              <td className="px-2 py-2">
+                ₹{payroll.basicSalary || 0}
+              </td>
 
-                        <td className="px-2 py-2">
-                          <button
-                            onClick={() => generatePayslip(payroll)}
-                            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs whitespace-nowrap"
-                          >
-                            Download PDF
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+              <td className="px-2 py-2">
+                ₹{payroll.allowances || 0}
+              </td>
+
+              <td className="px-2 py-2 text-red-600 font-semibold">
+                ₹{payroll.lopDeduction || 0}
+              </td>
+
+              <td className="px-2 py-2 text-red-600 font-semibold">
+                ₹{payroll.totalDeductions || 0}
+              </td>
+
+              <td className="px-2 py-2 text-green-700 font-bold">
+                ₹{payroll.netSalary || 0}
+              </td>
+
+              <td className="px-2 py-2">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    payroll.status === "Paid"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-blue-100 text-blue-700"
+                  }`}
+                >
+                  {payroll.status}
+                </span>
+              </td>
+
+              <td className="px-2 py-2">
+                <button
+                  onClick={() => generatePayslip(payroll)}
+                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs whitespace-nowrap"
+                >
+                  Download PDF
+                </button>
+              </td>
+
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
           </div>
         </div>
       </div>

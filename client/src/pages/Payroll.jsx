@@ -65,26 +65,16 @@ function Payroll() {
   };
 	const generateAllPayroll = async () => {
   try {
-    await axios.post(
-      `${API_URL}/payroll/generate-all`,
-      {
-        month,
-        allowances,
-        pfDeduction,
-        professionalTax,
-        otherDeductions,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const res = await api.post("/payroll/generate-all", {
+      month: formData.month,
+      allowances: formData.allowances,
+      pfDeduction: formData.pfDeduction,
+      professionalTax: formData.professionalTax,
+      otherDeductions: formData.otherDeductions,
+    });
 
-    toast.success("Payroll generated successfully");
-
+    toast.success(res.data.message);
     fetchPayrolls();
-
   } catch (err) {
     toast.error(err.response?.data?.message || "Error");
   }
@@ -233,23 +223,24 @@ function Payroll() {
                     {calculatePreviewNetSalary()}
                   </p>
 
-                  <p className="text-xs text-gray-500">
-                    Leave deduction will be calculated automatically after payroll generation.
-                  </p>
-                </div>
+                  </div>
 
-                <button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded w-full"
-                >
-	<button
-  onClick={generateAllPayroll}
-  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
->
-  Generate Payroll For All Employees
-</button>
-                  Generate Payroll
-                </button>
+                <div className="flex gap-3">
+  <button
+    type="submit"
+    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded"
+  >
+    Generate Payroll
+  </button>
+
+  <button
+    type="button"
+    onClick={generateAllPayroll}
+    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded"
+  >
+    Generate All
+  </button>
+</div>
               </form>
             </div>
 
@@ -279,13 +270,7 @@ function Payroll() {
                 </div>
               </div>
 
-              <div className="mt-6 bg-gray-100 p-4 rounded-lg text-sm md:text-base">
-                <p className="text-gray-600">Payroll calculation:</p>
-                <p className="font-semibold mt-2">
-                  Net Salary = Gross Salary - Leave Deduction - PF - PT - Other Deductions
-                </p>
-              </div>
-            </div>
+                         </div>
           </div>
 
           <div className="bg-white rounded-xl shadow p-4 md:p-6">
@@ -294,21 +279,15 @@ function Payroll() {
             </h2>
 
             <div className="overflow-x-auto">
-              <table className="min-w-[1500px] w-full text-sm">
+              <table className="w-full table-auto text-sm">
                 <thead>
                   <tr className="bg-blue-600 text-white">
                     <th className="p-3 text-left">Employee ID</th>
                     <th className="p-3 text-left">Name</th>
-                    <th className="p-3 text-left">Department</th>
                     <th className="p-3 text-left">Month</th>
                     <th className="p-3 text-left">Basic</th>
                     <th className="p-3 text-left">Allowances</th>
-                    <th className="p-3 text-left">Gross</th>
-                    <th className="p-3 text-left">Leave Details</th>
                     <th className="p-3 text-left">Leave Deduction</th>
-                    <th className="p-3 text-left">PF</th>
-                    <th className="p-3 text-left">PT</th>
-                    <th className="p-3 text-left">Other Deduction</th>
                     <th className="p-3 text-left">Total Deduction</th>
                     <th className="p-3 text-left">Net Salary</th>
                     <th className="p-3 text-left">Status</th>
@@ -326,52 +305,16 @@ function Payroll() {
                   ) : (
                     payrolls.map((payroll) => (
                       <tr key={payroll._id} className="border-b hover:bg-gray-50">
-                        <td className="p-3">{payroll.employeeId?.employeeId}</td>
-                        <td className="p-3">{payroll.employeeId?.name}</td>
-                        <td className="p-3">{payroll.employeeId?.department}</td>
-                        <td className="p-3">{payroll.month}</td>
-                        <td className="p-3">₹{payroll.basicSalary || 0}</td>
-                        <td className="p-3">₹{payroll.allowances || 0}</td>
-                        <td className="p-3">₹{payroll.grossSalary || 0}</td>
+                        <td className="px-2 py-2">{payroll.employeeId?.name}</td>
+                        <td className="px-2 py-2">{payroll.employeeId?.department}</td>
+                        <td className="px-2 py-2">{payroll.month}</td>
+                        <td className="px-2 py-2">₹{payroll.basicSalary || 0}</td>
+                        <td className="px-2 py-2">₹{payroll.allowances || 0}</td>
+                        
 
-                        <td className="p-3">
-                          {payroll.leaveDetails?.length > 0 ? (
-                            <div className="space-y-2">
-                              {payroll.leaveDetails.map((leave, index) => (
-                                <div
-                                  key={index}
-                                  className="border rounded p-2 text-xs bg-gray-50 min-w-[220px]"
-                                >
-                                  <p><b>Type:</b> {leave.leaveType}</p>
-                                  <p>
-                                    <b>Date:</b>{" "}
-                                    {leave.fromDate
-                                      ? new Date(leave.fromDate).toLocaleDateString()
-                                      : "-"}{" "}
-                                    to{" "}
-                                    {leave.toDate
-                                      ? new Date(leave.toDate).toLocaleDateString()
-                                      : "-"}
-                                  </p>
-                                  <p><b>Total Days:</b> {leave.totalDays || 0}</p>
-                                  <p><b>Paid Days:</b> {leave.paidDays || 0}</p>
-                                  <p className="text-red-600">
-                                    <b>LOP Days:</b> {leave.lopDays || 0}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            "-"
-                          )}
-                        </td>
-
-                        <td className="p-3 text-red-600 font-semibold">
+                       <td className="p-3 text-red-600 font-semibold">
                           ₹{payroll.lopDeduction || 0}
                         </td>
-                        <td className="p-3">₹{payroll.pfDeduction || 0}</td>
-                        <td className="p-3">₹{payroll.professionalTax || 0}</td>
-                        <td className="p-3">₹{payroll.otherDeductions || 0}</td>
                         <td className="p-3 text-red-600 font-semibold">
                           ₹{payroll.totalDeductions || 0}
                         </td>
@@ -379,7 +322,7 @@ function Payroll() {
                           ₹{payroll.netSalary || 0}
                         </td>
 
-                        <td className="p-3">
+                        <td className="px-2 py-2">
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold ${
                               payroll.status === "Paid"
@@ -391,7 +334,7 @@ function Payroll() {
                           </span>
                         </td>
 
-                        <td className="p-3">
+                        <td className="px-2 py-2">
                           <button
                             onClick={() => generatePayslip(payroll)}
                             className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs whitespace-nowrap"

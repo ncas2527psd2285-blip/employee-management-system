@@ -14,40 +14,50 @@ const {
   authorizeRoles,
 } = require("../middleware/authMiddleware");
 
-// Admin / HR
+
+// Admin / HR - Generate payroll for all employees
 router.post(
   "/generate-all",
   protect,
-  authorizeRoles("Admin"),
-  payrollController.generatePayrollForAll
-);
-router.post(
-  "/generate-all",
-  protect,
-  authorizeRoles("admin", "hr"),
+  authorizeRoles("Admin", "admin", "hr"),
   generatePayrollForAll
 );
 
+
+// Admin / HR - Generate single employee payroll
+router.post(
+  "/generate",
+  protect,
+  authorizeRoles("Admin", "admin", "hr"),
+  generatePayroll
+);
+
+
+// Get all payrolls
 router.get(
   "/",
   protect,
-  authorizeRoles("admin", "hr"),
+  authorizeRoles("Admin", "admin", "hr"),
   getPayrolls
 );
 
+
+// Mark payroll as paid
 router.put(
   "/:id/pay",
   protect,
-  authorizeRoles("admin", "hr"),
+  authorizeRoles("Admin", "admin", "hr"),
   markPayrollPaid
 );
 
-// Employee
+
+// Employee payslips
 router.get(
   "/my-payslips",
   protect,
   authorizeRoles("employee"),
   getMyPayslips
 );
+
 
 module.exports = router;

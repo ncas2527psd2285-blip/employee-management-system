@@ -282,8 +282,13 @@ function Payroll() {
               <table className="w-full table-auto text-sm">
                 <thead>
                   <tr className="bg-blue-600 text-white">
-                    <th className="p-3 text-left">Employee ID</th>
-                    <th className="p-3 text-left">Name</th>
+                    <td className="px-2 py-2">
+  {payroll.employeeId?.employeeId}
+</td>
+
+<td className="px-2 py-2">
+  {payroll.employeeId?.name}
+</td>
                     <th className="p-3 text-left">Month</th>
                     <th className="p-3 text-left">Basic</th>
                     <th className="p-3 text-left">Allowances</th>
@@ -305,8 +310,13 @@ function Payroll() {
                   ) : (
                     payrolls.map((payroll) => (
                       <tr key={payroll._id} className="border-b hover:bg-gray-50">
-                        <td className="px-2 py-2">{payroll.employeeId?.name}</td>
-                        <td className="px-2 py-2">{payroll.employeeId?.department}</td>
+                        <td className="px-2 py-2">
+  {payroll.employeeId?.employeeId}
+</td>
+
+<td className="px-2 py-2">
+  {payroll.employeeId?.name}
+</td>
                         <td className="px-2 py-2">{payroll.month}</td>
                         <td className="px-2 py-2">₹{payroll.basicSalary || 0}</td>
                         <td className="px-2 py-2">₹{payroll.allowances || 0}</td>

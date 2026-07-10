@@ -16,12 +16,11 @@ const {
 
 // Admin / HR
 router.post(
-  "/generate",
+  "/generate-all",
   protect,
-  authorizeRoles("admin", "hr"),
-  generatePayroll
+  authorizeRoles("Admin"),
+  payrollController.generatePayrollForAll
 );
-
 router.post(
   "/generate-all",
   protect,

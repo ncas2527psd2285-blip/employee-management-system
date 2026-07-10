@@ -42,18 +42,56 @@ exports.seedJuneData = async (req, res) => {
     const workingDays = getJuneWorkingDays();
     const attendanceData = [];
 
-    employees.forEach((emp) => {
-      workingDays.forEach((date) => {
-        attendanceData.push({
-          employeeId: emp._id,
-          date,
-          checkIn: "09:15:00 AM",
-          checkOut: "05:30:00 PM",
-          workingHours: 8.25,
-          status: "Present",
-        });
-      });
+   employees.forEach((emp) => {
+  workingDays.forEach((date, index) => {
+
+    let status = "Present";
+    let checkIn = "09:05:00 AM";
+    let checkOut = "05:35:00 PM";
+    let workingHours = 8.5;
+
+    // EMP003 - Late 3 times
+    if (emp.employeeId === "EMP003" && [2, 8, 15].includes(index)) {
+      status = "Late";
+      checkIn = "09:35:00 AM";
+      checkOut = "05:45:00 PM";
+      workingHours = 8.1;
+    }
+
+    // EMP004 - Half Day twice
+    if (emp.employeeId === "EMP004" && [6, 18].includes(index)) {
+      status = "Half Day";
+      checkIn = "09:00:00 AM";
+      checkOut = "01:00:00 PM";
+      workingHours = 4;
+    }
+
+    // EMP007 - Absent twice
+    if (emp.employeeId === "EMP007" && [10, 20].includes(index)) {
+      status = "Absent";
+      checkIn = null;
+      checkOut = null;
+      workingHours = 0;
+    }
+
+    // EMP009 - Late 4 times
+    if (emp.employeeId === "EMP009" && [3, 7, 14, 19].includes(index)) {
+      status = "Late";
+      checkIn = "09:40:00 AM";
+      checkOut = "05:40:00 PM";
+      workingHours = 8;
+    }
+
+    attendanceData.push({
+      employeeId: emp._id,
+      date,
+      checkIn,
+      checkOut,
+      workingHours,
+      status,
     });
+  });
+});
 
     await Attendance.insertMany(attendanceData);
 

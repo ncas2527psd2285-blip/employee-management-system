@@ -3,19 +3,52 @@ const router = express.Router();
 
 const {
   generatePayroll,
+  generatePayrollForAll,
   getPayrolls,
   getMyPayslips,
   markPayrollPaid,
 } = require("../controllers/payrollController");
 
-const { protect, authorizeRoles } = require("../middleware/authMiddleware");
+const {
+  protect,
+  authorizeRoles,
+} = require("../middleware/authMiddleware");
 
-router.get("/my-payslips", protect, authorizeRoles("employee"), getMyPayslips);
+// Admin / HR
+router.post(
+  "/generate",
+  protect,
+  authorizeRoles("admin", "hr"),
+  generatePayroll
+);
 
-router.post("/generate", protect, authorizeRoles("admin", "hr"), generatePayroll);
+router.post(
+  "/generate-all",
+  protect,
+  authorizeRoles("admin", "hr"),
+  generatePayrollForAll
+);
 
-router.get("/", protect, authorizeRoles("admin", "hr"), getPayrolls);
+router.get(
+  "/",
+  protect,
+  authorizeRoles("admin", "hr"),
+  getPayrolls
+);
 
-router.put("/:id/paid", protect, authorizeRoles("admin", "hr"), markPayrollPaid);
+router.put(
+  "/:id/pay",
+  protect,
+  authorizeRoles("admin", "hr"),
+  markPayrollPaid
+);
+
+// Employee
+router.get(
+  "/my-payslips",
+  protect,
+  authorizeRoles("employee"),
+  getMyPayslips
+);
 
 module.exports = router;

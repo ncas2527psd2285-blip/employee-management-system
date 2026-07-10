@@ -63,7 +63,32 @@ function Payroll() {
 
     return basic + allowances - (pf + pt + other);
   };
+	const generateAllPayroll = async () => {
+  try {
+    await axios.post(
+      `${API_URL}/payroll/generate-all`,
+      {
+        month,
+        allowances,
+        pfDeduction,
+        professionalTax,
+        otherDeductions,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
+    toast.success("Payroll generated successfully");
+
+    fetchPayrolls();
+
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Error");
+  }
+};
   const generatePayroll = async (e) => {
     e.preventDefault();
 
@@ -217,6 +242,12 @@ function Payroll() {
                   type="submit"
                   className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded w-full"
                 >
+	<button
+  onClick={generateAllPayroll}
+  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+>
+  Generate Payroll For All Employees
+</button>
                   Generate Payroll
                 </button>
               </form>

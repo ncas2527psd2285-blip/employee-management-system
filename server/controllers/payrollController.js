@@ -205,3 +205,11 @@ exports.generatePayrollForAll = async (req, res) => {
 
   }
 };
+
+console.log({
+ generatePayroll: typeof exports.generatePayroll,
+ generatePayrollForAll: typeof exports.generatePayrollForAll,
+ getPayrolls: typeof exports.getPayrolls,
+ getMyPayslips: typeof exports.getMyPayslips,
+ markPayrollPaid: typeof exports.markPayrollPaid
+});

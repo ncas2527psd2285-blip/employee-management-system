@@ -1,13 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const {
-  generatePayroll,
-  generatePayrollForAll,
-  getPayrolls,
-  getMyPayslips,
-  markPayrollPaid,
-} = require("../controllers/payrollController");
+const payrollController = require("../controllers/payrollController");
 
 const {
   protect,
@@ -15,21 +9,21 @@ const {
 } = require("../middleware/authMiddleware");
 
 
-// Admin / HR - Generate payroll for all employees
+// Generate payroll for all employees
 router.post(
   "/generate-all",
   protect,
   authorizeRoles("Admin", "admin", "hr"),
-  generatePayrollForAll
+  payrollController.generatePayrollForAll
 );
 
 
-// Admin / HR - Generate single employee payroll
+// Generate single payroll
 router.post(
   "/generate",
   protect,
   authorizeRoles("Admin", "admin", "hr"),
-  generatePayroll
+  payrollController.generatePayroll
 );
 
 
@@ -38,16 +32,16 @@ router.get(
   "/",
   protect,
   authorizeRoles("Admin", "admin", "hr"),
-  getPayrolls
+  payrollController.getPayrolls
 );
 
 
-// Mark payroll as paid
+// Mark payroll paid
 router.put(
   "/:id/pay",
   protect,
   authorizeRoles("Admin", "admin", "hr"),
-  markPayrollPaid
+  payrollController.markPayrollPaid
 );
 
 
@@ -56,7 +50,7 @@ router.get(
   "/my-payslips",
   protect,
   authorizeRoles("employee"),
-  getMyPayslips
+  payrollController.getMyPayslips
 );
 
 

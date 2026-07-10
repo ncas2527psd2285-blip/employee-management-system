@@ -21,27 +21,51 @@ const getDashboardStats = async (req, res) => {
     const totalEmployees = await Employee.countDocuments();
     const activeEmployees = await Employee.countDocuments({ status: "Active" });
 
-    const todayAttendance = await Attendance.find({
-      createdAt: {
-        $gte: todayStart,
-        $lt: todayEnd,
-      },
-    }).populate("employeeId");
+   const todayAttendance = await Attendance.find({
+  date: {
+    $gte: todayStart,
+    $lt: todayEnd,
+  },
+}).populate("employeeId");
 
-    const presentToday = todayAttendance.length;
-    const absentToday = totalEmployees - presentToday;
+const presentEmployees = [
+  ...new Set(
+    todayAttendance
+      .filter((item) => item.checkIn)
+      .map((item) => item.employeeId?._id.toString())
+  ),
+];
 
-    const lateToday = todayAttendance.filter(
-      (item) => item.status === "Late"
-    ).length;
+const presentToday = presentEmployees.length;
 
-    const halfDayToday = todayAttendance.filter(
-      (item) => item.status === "Half Day"
-    ).length;
+const absentToday = totalEmployees - presentToday;
 
-    const completedToday = todayAttendance.filter(
-      (item) => item.checkIn && item.checkOut
-    ).length;
+    const lateToday = [
+  ...new Set(
+    todayAttendance
+      .filter((item) => item.status === "Late")
+      .map((item) => item.employeeId?._id.toString())
+  ),
+].length;
+
+
+const halfDayToday = [
+  ...new Set(
+    todayAttendance
+      .filter((item) => item.status === "Half Day")
+      .map((item) => item.employeeId?._id.toString())
+  ),
+].length;
+
+   const completedEmployees = [
+  ...new Set(
+    todayAttendance
+      .filter((item) => item.checkIn && item.checkOut)
+      .map((item) => item.employeeId?._id.toString())
+  ),
+];
+
+const completedToday = completedEmployees.length;
 
     const pendingLeaves = await Leave.countDocuments({ status: "Pending" });
     const approvedLeaves = await Leave.countDocuments({ status: "Approved" });

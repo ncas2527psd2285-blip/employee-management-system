@@ -48,7 +48,7 @@ function Dashboard() {
   };
 
 
-  const StatCard = ({title,value,icon,color}) => (
+  const StatCard = ({ title, value, icon, color }) => (
 
     <div className="bg-white p-4 md:p-6 rounded-xl shadow">
 
@@ -77,44 +77,40 @@ function Dashboard() {
   );
 
 
-
   const departmentChartData =
-    stats?.departmentStats?.map(item=>({
+    stats?.departmentStats?.map(item => ({
 
-      name:item._id,
-      employees:item.count
+      name: item._id,
+      employees: item.count
 
     })) || [];
-
 
 
   const leaveChartData = [
 
     {
-      name:"Pending",
-      value:stats?.pendingLeaves || 0
+      name: "Pending",
+      value: stats?.pendingLeaves || 0
     },
 
     {
-      name:"Approved",
-      value:stats?.approvedLeaves || 0
+      name: "Approved",
+      value: stats?.approvedLeaves || 0
     },
 
     {
-      name:"Rejected",
-      value:stats?.rejectedLeaves || 0
+      name: "Rejected",
+      value: stats?.rejectedLeaves || 0
     }
 
   ];
 
 
-
-  const leaveColors=[
+  const leaveColors = [
     "#FACC15",
     "#22C55E",
     "#EF4444"
   ];
-
 
 
   return (
@@ -145,10 +141,7 @@ function Dashboard() {
               Overview of employees, attendance, leaves and departments
             </p>
 
-
           </div>
-
-
 
 
           {!stats ? (
@@ -157,9 +150,7 @@ function Dashboard() {
               Loading dashboard...
             </p>
 
-
           ) : (
-
 
           <>
 
@@ -167,7 +158,7 @@ function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
 
 
-            <StatCard 
+            <StatCard
               title="Total Employees"
               value={stats.totalEmployees}
               icon="👥"
@@ -266,6 +257,7 @@ function Dashboard() {
 
           <div className="bg-white p-6 rounded-xl shadow">
 
+
           <h2 className="text-xl font-bold mb-4">
             Employees by Department
           </h2>
@@ -273,16 +265,22 @@ function Dashboard() {
 
           <ResponsiveContainer width="100%" height={300}>
 
+
           <BarChart data={departmentChartData}>
 
+
           <XAxis dataKey="name"/>
+
           <YAxis/>
+
           <Tooltip/>
 
-          <Bar 
+
+          <Bar
             dataKey="employees"
             fill="#2563EB"
           />
+
 
           </BarChart>
 
@@ -297,6 +295,7 @@ function Dashboard() {
 
 
           <div className="bg-white p-6 rounded-xl shadow">
+
 
           <h2 className="text-xl font-bold mb-4">
             Leave Status
@@ -346,149 +345,6 @@ function Dashboard() {
 
 
           </div>
-
-
-
-
-
-          <div className="bg-white rounded-xl shadow p-6">
-
-
-          <h2 className="text-xl font-bold mb-4">
-            Recent Attendance
-          </h2>
-
-
-
-          {
-          stats.recentAttendance?.length ? (
-
-
-          <div className="overflow-x-auto">
-
-
-          <table className="w-full">
-
-
-          <thead>
-
-          <tr className="bg-gray-100">
-
-          <th className="p-3 text-left">
-            Employee
-          </th>
-
-          <th className="p-3 text-left">
-            Department
-          </th>
-
-          <th className="p-3 text-left">
-            Check In
-          </th>
-
-          <th className="p-3 text-left">
-            Check Out
-          </th>
-
-          <th className="p-3 text-left">
-            Hours
-          </th>
-
-          <th className="p-3 text-left">
-            Status
-          </th>
-
-          </tr>
-
-
-          </thead>
-
-
-
-          <tbody>
-
-
-          {
-          stats.recentAttendance.map((item,index)=>(
-
-
-          <tr key={index}
-          className="border-b">
-
-
-          <td className="p-3">
-
-          {item.name}
-
-          <br/>
-
-          <span className="text-xs text-gray-500">
-          {item.employeeId}
-          </span>
-
-
-          </td>
-
-
-          <td className="p-3">
-          {item.department}
-          </td>
-
-
-          <td className="p-3">
-          {item.checkIn || "-"}
-          </td>
-
-
-          <td className="p-3">
-          {item.checkOut || "-"}
-          </td>
-
-
-          <td className="p-3">
-          {item.workingHours || "-"}
-          </td>
-
-
-          <td className="p-3">
-          {item.status}
-          </td>
-
-
-          </tr>
-
-
-          ))
-          }
-
-
-
-          </tbody>
-
-
-          </table>
-
-
-          </div>
-
-
-          ):(
-
-
-          <p className="text-gray-500">
-            No attendance today
-          </p>
-
-
-          )
-
-
-          }
-
-
-
-          </div>
-
 
 
           </>

@@ -69,24 +69,6 @@ function Payroll() {
     return basic + allowances - (pf + pt + other);
   };
 
-  const generateAllPayroll = async () => {
-    try {
-      const res = await api.post("/payroll/generate-all", {
-        month: formData.month,
-        allowances: formData.allowances,
-        pfDeduction: formData.pfDeduction,
-        professionalTax: formData.professionalTax,
-        otherDeductions: formData.otherDeductions,
-      });
-
-      toast.success(res.data.message);
-      fetchPayrolls();
-    } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Error"
-      );
-    }
-  };
 
   const generatePayroll = async (e) => {
     e.preventDefault();
@@ -230,24 +212,16 @@ function Payroll() {
 
                 </div>
 
-                <div className="flex gap-3">
+               <div>
 
-                  <button
-                    type="submit"
-                    className="flex-1 bg-blue-600 text-white py-3 rounded"
-                  >
-                    Generate Payroll
-                  </button>
+  <button
+    type="submit"
+    className="w-full bg-blue-600 text-white py-3 rounded"
+  >
+    Generate Payroll
+  </button>
 
-                  <button
-                    type="button"
-                    onClick={generateAllPayroll}
-                    className="flex-1 bg-green-600 text-white py-3 rounded"
-                  >
-                    Generate All
-                  </button>
-
-                </div>
+</div>
 
               </form>
 

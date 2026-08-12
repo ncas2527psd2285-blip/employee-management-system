@@ -1,95 +1,132 @@
-import { useState } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
-function Sidebar() {
+const Sidebar = ({ user }) => {
   const location = useLocation();
-  const user = JSON.parse(localStorage.getItem("user"));
-  const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
-    { name: "Dashboard", path: "/dashboard", icon: "🏠" },
-    { name: "Employees", path: "/employees", icon: "👥" },
-    { name: "Recruitment", path: "/recruitment", icon: "🎯" },
-    { name: "Attendance", path: "/attendance", icon: "🕒" },
-    { name: "Apply Leave", path: "/apply-leave", icon: "📝" },
-    { name: "Leave Management", path: "/leaves", icon: "🌴" },
-    { name: "Payroll", path: "/payroll", icon: "💰" },
-    { name: "Reports", path: "/reports", icon: "📊" },
-    // Show only for Admin and HR
-    ...(user?.role === "admin" || user?.role === "hr"
-      ? [{ name: "User Management", path: "/users", icon: "👤" }]
+    {
+      name: "Dashboard",
+      icon: "🏠",
+      path: "/dashboard",
+    },
+    {
+      name: "Employees",
+      icon: "👥",
+      path: "/employees",
+    },
+    {
+      name: "Attendance",
+      icon: "🕘",
+      path: "/attendance",
+    },
+    {
+      name: "Apply Leave",
+      icon: "📄",
+      path: "/apply-leave",
+    },
+    {
+      name: "Leave Management",
+      icon: "🌴",
+      path: "/leave-management",
+    },
+    {
+      name: "Payroll",
+      icon: "💰",
+      path: "/payroll",
+    },
+    {
+      name: "Reports",
+      icon: "📊",
+      path: "/reports",
+    },
+    ...(user?.role === "admin"
+      ? [
+        {
+          name: "User Management",
+          icon: "👤",
+          path: "/users",
+        },
+      ]
       : []),
-
-    { name: "Settings", path: "/settings", icon: "⚙️" },
   ];
 
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 bg-slate-900 text-white p-3 rounded-lg shadow"
-      >
-        ☰
-      </button>
+    <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col bg-slate-900 text-white">
 
-      {isOpen && (
-        <div
-          onClick={() => setIsOpen(false)}
-          className="md:hidden fixed inset-0 bg-black/50 z-40"
-        />
-      )}
+      {/* ================= HEADER ================= */}
+      <div className="shrink-0 border-b border-slate-700 px-6 py-7">
+        <h1 className="text-3xl font-bold tracking-tight">EMS</h1>
 
-      <div
-        className={`fixed top-0 left-0 z-50 w-64 h-screen bg-slate-900 text-white shadow-xl transform transition-transform duration-300
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        md:translate-x-0`}
-      >
-        <div className="p-6 border-b border-slate-700 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold">EMS</h1>
-            <p className="text-sm text-slate-300 mt-1">
-              Employee Management System
-            </p>
+        <p className="mt-1 text-sm text-slate-400">
+          Employee Management System
+        </p>
+      </div>
+
+      {/* ================= NAVIGATION ================= */}
+      <nav className="min-h-0 flex-1 overflow-y-auto px-3 py-5">
+        <div className="space-y-2">
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex min-h-[52px] items-center gap-4 rounded-lg px-4 text-[16px] transition-all ${isActive(item.path)
+                ? "bg-blue-600 font-semibold text-white shadow-sm"
+                : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                }`}
+            >
+              <span className="flex w-7 shrink-0 justify-center text-xl">
+                {item.icon}
+              </span>
+
+              <span className="truncate">{item.name}</span>
+            </Link>
+          ))}
+        </div>
+      </nav>
+
+      {/* ================= USER FOOTER ================= */}
+      <div className="shrink-0 border-t border-slate-700 bg-slate-900">
+
+        {/* ADMIN PROFILE */}
+        <div className="flex items-center gap-3 px-5 py-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-600 text-lg font-bold">
+            {user?.name?.charAt(0)?.toUpperCase() || "A"}
           </div>
 
-          <button
-            onClick={() => setIsOpen(false)}
-            className="md:hidden text-white text-2xl"
-          >
-            ×
-          </button>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-white">
+              {user?.name || "admin"}
+            </p>
+
+            <p className="truncate text-xs text-slate-400">
+              {user?.role || "Administrator"}
+            </p>
+          </div>
         </div>
 
-        <nav className="mt-6 px-3">
-          {menuItems.map((item) => {
-            const isActive = location.pathname === item.path;
+        {/* SETTINGS */}
+        <Link
+          to="/settings"
+          className={`flex min-h-[52px] items-center gap-4 border-t border-slate-800 px-5 transition-all ${isActive("/settings")
+            ? "bg-slate-800 text-white"
+            : "text-slate-300 hover:bg-slate-800 hover:text-white"
+            }`}
+        >
+          <span className="flex w-7 justify-center text-xl">
+            ⚙️
+          </span>
 
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 mb-2 rounded-lg transition ${isActive
-                    ? "bg-blue-600 text-white font-semibold shadow"
-                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                  }`}
-              >
-                <span className="text-lg">{item.icon}</span>
-                <span>{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
+          <span className="text-[16px]">
+            Settings
+          </span>
+        </Link>
 
-        <div className="absolute bottom-0 w-full border-t border-slate-700 p-4">
-          <p className="font-semibold">{user?.name || "Admin"}</p>
-          <p className="text-slate-400 text-sm">
-            {user?.role || "Administrator"}
-          </p>
-        </div>
       </div>
-    </>
+    </aside>
   );
-}
+};
 
 export default Sidebar;

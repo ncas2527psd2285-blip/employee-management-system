@@ -6,22 +6,22 @@ function Sidebar() {
   const user = JSON.parse(localStorage.getItem("user"));
   const [isOpen, setIsOpen] = useState(false);
 
- const menuItems = [
-  { name: "Dashboard", path: "/dashboard", icon: "🏠" },
-  { name: "Employees", path: "/employees", icon: "👥" },
-  { name: "Attendance", path: "/attendance", icon: "🕒" },
-  { name: "Apply Leave", path: "/apply-leave", icon: "📝" },
-  { name: "Leave Management", path: "/leaves", icon: "🌴" },
-  { name: "Payroll", path: "/payroll", icon: "💰" },
-  { name: "Reports", path: "/reports", icon: "📊" },
+  const menuItems = [
+    { name: "Dashboard", path: "/dashboard", icon: "🏠" },
+    { name: "Employees", path: "/employees", icon: "👥" },
+    { name: "Recruitment", path: "/recruitment", icon: "🎯" },
+    { name: "Attendance", path: "/attendance", icon: "🕒" },
+    { name: "Apply Leave", path: "/apply-leave", icon: "📝" },
+    { name: "Leave Management", path: "/leaves", icon: "🌴" },
+    { name: "Payroll", path: "/payroll", icon: "💰" },
+    { name: "Reports", path: "/reports", icon: "📊" },
+    // Show only for Admin and HR
+    ...(user?.role === "admin" || user?.role === "hr"
+      ? [{ name: "User Management", path: "/users", icon: "👤" }]
+      : []),
 
-  // Show only for Admin and HR
-  ...(user?.role === "admin" || user?.role === "hr"
-    ? [{ name: "User Management", path: "/users", icon: "👤" }]
-    : []),
-
-  { name: "Settings", path: "/settings", icon: "⚙️" },
-];
+    { name: "Settings", path: "/settings", icon: "⚙️" },
+  ];
 
   return (
     <>
@@ -69,11 +69,10 @@ function Sidebar() {
                 key={item.path}
                 to={item.path}
                 onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 mb-2 rounded-lg transition ${
-                  isActive
+                className={`flex items-center gap-3 px-4 py-3 mb-2 rounded-lg transition ${isActive
                     ? "bg-blue-600 text-white font-semibold shadow"
                     : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                }`}
+                  }`}
               >
                 <span className="text-lg">{item.icon}</span>
                 <span>{item.name}</span>

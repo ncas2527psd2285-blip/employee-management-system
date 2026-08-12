@@ -1,6 +1,9 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+
+dotenv.config();
+
 const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
@@ -13,8 +16,6 @@ const userRoutes = require("./routes/userRoutes");
 const seedRoutes = require("./routes/seedRoutes");
 const recruitmentRoutes = require("./routes/recruitmentRoutes");
 
-dotenv.config();
-
 connectDB();
 
 const app = express();
@@ -25,25 +26,21 @@ const allowedOrigins = [
   "https://employee-management-system-tk1923.vercel.app"
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) {
-        return callback(null, true);
-      }
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("Blocked CORS origin:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
 
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
